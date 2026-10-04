@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import Pomodoro from './components/Pomodoro';
 import UploadModal from './components/UploadModal';
 import FlashcardViewer from './components/FlashcardViewer';
 import QuizView from './components/QuizView';

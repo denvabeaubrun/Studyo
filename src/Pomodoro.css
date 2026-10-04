@@ -39,11 +39,11 @@
 }
 
 /* On wide screens it sits at the top right, like the mockup. */
-@media (min-width: 1180px) {
+@media (min-width: 1300px) {
   .pomo-card {
     position: absolute;
     top: 96px;
-    right: 24px;
+    left: calc(50% + 340px); /* hugs the right edge of the 600px content column */
     margin: 0;
     width: 280px;
   }

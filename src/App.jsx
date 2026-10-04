@@ -158,10 +158,15 @@ function App() {
         <h1 className="logo">📚 Studyo</h1>
       </header>
       <main className="main">
-        <h2 className="title">Stay studious with studyo</h2>
-        <p className="subtitle">Create flascards, mock quizzes and more</p>
-        <p className="subtitle">Pick a subject</p>
-        <section className="subjects-section">
+  <h2 className="title">Stay studious with studyo</h2>
+  <p className="subtitle">Create flashcards, mock quizzes and more</p>
+  <p className="subtitle">Pick a subject</p>
+
+  <div hidden={selectedSubject !== null}>
+    <Pomodoro />
+  </div>
+
+  <section className="subjects-section">
           {selectedSubject === null ? (
             <>
               <div className="subjects-header">

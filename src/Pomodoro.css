@@ -1,0 +1,193 @@
+.pomo-card {
+  --pomo-ink: #1a1a1a;
+  --pomo-accent: #5bc0eb;
+  --pomo-accent-shadow: #3da1cc;
+
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 300px;
+  margin: 24px auto;
+  padding: 20px;
+  text-align: center;
+  color: var(--pomo-ink);
+  background: #fff8f0;
+  border: 2px solid var(--pomo-ink);
+  border-radius: 20px;
+  box-shadow: 4px 4px var(--pomo-ink);
+  font-family: inherit;
+}
+/* Breaks switch to the same green the quiz uses for correct answers. */
+.pomo-card[data-mode="short"],
+.pomo-card[data-mode="long"] {
+  --pomo-accent: #7dd3a0;
+  --pomo-accent-shadow: #4fb07c;
+}
+.pomo-card *,
+.pomo-card *::before,
+.pomo-card *::after {
+  box-sizing: border-box;
+}
+.pomo-card button {
+  font-family: inherit;
+  color: var(--pomo-ink);
+  cursor: pointer;
+}
+.pomo-card button:focus-visible,
+.pomo-card input:focus-visible {
+  outline: 3px solid var(--pomo-ink);
+  outline-offset: 2px;
+}
+
+/* On wide screens it sits at the top right, like the mockup. */
+@media (min-width: 1180px) {
+  .pomo-card {
+    position: absolute;
+    top: 96px;
+    right: 24px;
+    margin: 0;
+    width: 280px;
+  }
+}
+
+.pomo-title {
+  margin: 0 0 14px;
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.pomo-tabs {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+.pomo-tabs button {
+  padding: 8px 0;
+  font-size: 13px;
+  font-weight: 700;
+  background: #fff;
+  border: 2px solid var(--pomo-ink);
+  border-radius: 12px;
+}
+.pomo-tabs button[aria-pressed="true"] {
+  background: var(--pomo-accent);
+}
+
+.pomo-digits {
+  margin-top: 18px;
+  font-size: 56px;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+}
+.pomo-label {
+  margin: 6px 0 14px;
+  font-size: 14px;
+  color: #555;
+}
+.pomo-bar {
+  height: 14px;
+  background: #fff;
+  border: 2px solid var(--pomo-ink);
+  border-radius: 999px;
+  overflow: hidden;
+}
+.pomo-bar > div {
+  height: 100%;
+  background: var(--pomo-accent);
+  border-right: 2px solid var(--pomo-ink);
+  transition: width 0.3s linear;
+}
+.pomo-bar > div[style*="width: 0%"] {
+  border-right: 0;
+}
+
+.pomo-controls {
+  display: flex;
+  gap: 8px;
+  margin-top: 16px;
+}
+.pomo-start,
+.pomo-btn,
+.pomo-music-row {
+  padding: 12px 14px;
+  font-size: 15px;
+  font-weight: 700;
+  border-radius: 12px;
+  transition: all 0.15s;
+}
+.pomo-start {
+  flex: 1;
+  background: var(--pomo-accent);
+  border: 2px solid var(--pomo-ink);
+  box-shadow: 0 3px var(--pomo-ink);
+}
+.pomo-btn,
+.pomo-music-row {
+  background: #fff;
+  border: 2px solid var(--pomo-ink);
+  box-shadow: 0 3px var(--pomo-ink);
+}
+.pomo-note[aria-pressed="true"] {
+  background: var(--pomo-accent);
+}
+.pomo-start:hover,
+.pomo-btn:hover,
+.pomo-music-row:hover {
+  transform: translateY(2px);
+  box-shadow: 0 1px var(--pomo-ink);
+}
+.pomo-start:active,
+.pomo-btn:active,
+.pomo-music-row:active {
+  transform: translateY(3px);
+  box-shadow: 0 0 var(--pomo-ink);
+}
+
+.pomo-music-row {
+  width: 100%;
+  margin-top: 14px;
+  font-size: 14px;
+}
+
+.pomo-music-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 12px;
+}
+.pomo-option {
+  padding: 10px 14px;
+  text-align: left;
+  font-size: 14px;
+  font-weight: 600;
+  background: #fff;
+  border: 2px solid var(--pomo-ink);
+  border-radius: 12px;
+}
+.pomo-option:hover {
+  background: #f5f5f5;
+}
+.pomo-option[aria-pressed="true"] {
+  background: var(--pomo-accent);
+}
+.pomo-volume {
+  display: grid;
+  gap: 6px;
+  text-align: left;
+  font-size: 13px;
+  font-weight: 700;
+  color: #444;
+}
+.pomo-volume input {
+  accent-color: var(--pomo-ink);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pomo-bar > div,
+  .pomo-start,
+  .pomo-btn,
+  .pomo-music-row {
+    transition: none;
+  }
+}

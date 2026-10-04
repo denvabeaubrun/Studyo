@@ -5,9 +5,9 @@
 
   box-sizing: border-box;
   width: 100%;
-  max-width: 300px;
+  max-width: 340px;
   margin: 24px auto;
-  padding: 20px;
+  padding: 24px;
   text-align: center;
   color: var(--pomo-ink);
   background: #fff8f0;
@@ -43,9 +43,10 @@
   .pomo-card {
     position: absolute;
     top: 96px;
-    left: calc(50% + 340px); /* hugs the right edge of the 600px content column */
+    left: calc(50% + 330px); /* just right of the 600px content column */
     margin: 0;
-    width: 280px;
+    width: clamp(280px, calc(50vw - 354px), 340px); /* grows up to 340px as the screen allows */
+    max-width: none;
   }
 }
 
@@ -74,7 +75,7 @@
 
 .pomo-digits {
   margin-top: 18px;
-  font-size: 56px;
+  font-size: 64px;
   font-weight: 800;
   line-height: 1;
   letter-spacing: -0.02em;

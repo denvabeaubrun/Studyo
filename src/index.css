@@ -6,7 +6,7 @@
 
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  background: #FFFFFF;
+  background: #EAF6FC;   /* was #FFFFFF */
   color: #1a1a1a;
   min-height: 100vh;
 }
@@ -22,7 +22,7 @@ body {
   padding: 16px 24px;
   position: sticky;
   top: 0;
-  background: white;
+  background: #EAF6FC;
   z-index: 10;
   margin: -24px -24px 0;
 }

@@ -1,0 +1,77 @@
+/* Two-column homepage: subjects on the left, the Pomodoro pod on the right. */
+.main.main--wide {
+  width: 100%;
+  max-width: 1120px;
+  margin-left: auto;
+  margin-right: auto;
+}
+.home-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 340px;
+  gap: 48px;
+  align-items: start;
+  margin-top: 32px;
+}
+.home-layout .subjects-section {
+  margin: 0;      /* index.css adds a 64px top margin that would push the subjects below the timer */
+  padding: 0;
+  text-align: left;
+}
+.home-side {
+  position: sticky;
+  top: 96px;      /* clears the sticky header */
+}
+.home-layout .subjects-grid {
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+}
+
+/* Deck counts and readable text on dark cards */
+.subject-meta {
+  margin: 4px 0 0;
+  font-size: 13px;
+  font-weight: 600;
+  opacity: 0.8;
+}
+.subject-card.is-dark,
+.subject-card.is-dark .subject-name {
+  color: #ffffff;
+}
+
+/* "New subject" lives in the grid as a dashed tile */
+.subject-card.new-subject-tile {
+  background: transparent;
+  border-style: dashed;
+  box-shadow: none;
+  font: inherit;
+  cursor: pointer;
+}
+.subject-card.new-subject-tile:hover {
+  background: rgba(91, 192, 235, 0.12);
+}
+.new-subject-plus {
+  font-size: 40px;
+  line-height: 1;
+}
+
+/* The pod is always on screen on desktop, so this button only matters on phones. */
+@media (min-width: 861px) {
+  .pomodoro-button {
+    display: none;
+  }
+}
+
+@media (max-width: 860px) {
+  .home-layout {
+    grid-template-columns: 1fr;
+  }
+  .home-side {
+    position: static;
+  }
+  .title {
+    font-size: 40px;
+  }
+  /* Room for the mini player pinned to the bottom */
+  .app {
+    padding-bottom: 110px;
+  }
+}

@@ -1,194 +1,373 @@
-.pomo-card {
-  --pomo-ink: #1a1a1a;
-  --pomo-accent: #5bc0eb;
-  --pomo-accent-shadow: #3da1cc;
-
-  box-sizing: border-box;
-  width: 100%;
-  max-width: 340px;
-  margin: 24px auto;
-  padding: 24px;
-  text-align: center;
-  color: var(--pomo-ink);
-  background: #fff8f0;
-  border: 2px solid var(--pomo-ink);
-  border-radius: 20px;
-  box-shadow: 4px 4px var(--pomo-ink);
+.pod {
+  --pod-ink: #1a1a1a;
+  --pod-skin: #5bc0eb;          /* Studyo blue body */
+  --pod-wheel: #ffffff;
+  --pod-button: #fff8f0;        /* cream center button */
+  --pod-lcd: #d7e3dc;
+  --pod-lcd-ink: #18261f;
+  --pod-lcd-dim: #4c5f55;
   font-family: inherit;
+  color: var(--pod-ink);
 }
-/* Breaks switch to the same green the quiz uses for correct answers. */
-.pomo-card[data-mode="short"],
-.pomo-card[data-mode="long"] {
-  --pomo-accent: #7dd3a0;
-  --pomo-accent-shadow: #4fb07c;
+/* Breaks use the same green the quiz uses for correct answers. */
+.pod[data-mode="short"],
+.pod[data-mode="long"] {
+  --pod-button: #7dd3a0;
+  --pod-lcd: #c9ecd6;
 }
-.pomo-card *,
-.pomo-card *::before,
-.pomo-card *::after {
+.pod *,
+.pod *::before,
+.pod *::after {
   box-sizing: border-box;
 }
-.pomo-card button {
+.pod button {
   font-family: inherit;
-  color: var(--pomo-ink);
+  color: var(--pod-ink);
   cursor: pointer;
 }
-.pomo-card button:focus-visible,
-.pomo-card input:focus-visible {
-  outline: 3px solid var(--pomo-ink);
+.pod button:focus-visible {
+  outline: 3px solid var(--pod-ink);
   outline-offset: 2px;
 }
 
-/* On wide screens it sits at the top right, like the mockup. */
-@media (min-width: 1300px) {
-  .pomo-card {
-    position: absolute;
-    top: 96px;
-    left: calc(50% + 330px); /* just right of the 600px content column */
-    margin: 0;
-    width: clamp(280px, calc(50vw - 354px), 340px); /* grows up to 340px as the screen allows */
-    max-width: none;
-  }
+/* ---------- body ---------- */
+.pod-body {
+  width: 100%;
+  max-width: 340px;
+  margin: 0 auto;
+  padding: 18px 22px 26px;
+  background: var(--pod-skin);
+  border: 3px solid var(--pod-ink);
+  border-radius: 28px;
+  box-shadow: 7px 7px 0 var(--pod-ink);
 }
-
-.pomo-title {
-  margin: 0 0 14px;
+.pod-title {
+  margin: 0 0 12px;
+  text-align: center;
   font-size: 18px;
   font-weight: 800;
 }
 
-.pomo-tabs {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
+/* ---------- screen ---------- */
+.pod-screen {
+  position: relative;
+  overflow: hidden;
+  padding: 8px 12px 12px;
+  color: var(--pod-lcd-ink);
+  background: var(--pod-lcd);
+  border: 3px solid var(--pod-ink);
+  border-radius: 12px;
+  transition: background 0.3s;
+}
+.pod-status {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+  padding-bottom: 5px;
+  font-size: 12px;
+  font-weight: 800;
+  border-bottom: 2px solid var(--pod-lcd-ink);
+}
+.pod-status-right {
+  display: flex;
+  align-items: center;
   gap: 8px;
 }
-.pomo-tabs button {
-  padding: 8px 0;
+.pod-note {
   font-size: 13px;
-  font-weight: 700;
-  background: #fff;
-  border: 2px solid var(--pomo-ink);
-  border-radius: 12px;
+  opacity: 0.25;
 }
-.pomo-tabs button[aria-pressed="true"] {
-  background: var(--pomo-accent);
+.pod-note.is-on {
+  opacity: 1;
 }
-
-.pomo-digits {
-  margin-top: 18px;
-  font-size: 64px;
+.pod-battery {
+  position: relative;
+  width: 24px;
+  height: 11px;
+  padding: 1px;
+  border: 2px solid var(--pod-lcd-ink);
+  border-radius: 2px;
+}
+.pod-battery::after {
+  content: "";
+  position: absolute;
+  top: 2px;
+  right: -4px;
+  width: 2px;
+  height: 3px;
+  background: var(--pod-lcd-ink);
+}
+.pod-battery span {
+  display: block;
+  height: 100%;
+  background: var(--pod-lcd-ink);
+}
+.pod-digits {
+  margin: 10px 0 2px;
+  text-align: center;
+  font-size: 56px;
   font-weight: 800;
   line-height: 1;
   letter-spacing: -0.02em;
   font-variant-numeric: tabular-nums;
 }
-.pomo-label {
-  margin: 6px 0 14px;
-  font-size: 14px;
-  color: #555;
+.pod-label {
+  text-align: center;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--pod-lcd-dim);
 }
-.pomo-bar {
-  height: 14px;
-  background: #fff;
-  border: 2px solid var(--pomo-ink);
-  border-radius: 999px;
+.pod-bar {
+  height: 9px;
+  margin: 10px 0 12px;
   overflow: hidden;
+  border: 2px solid var(--pod-lcd-ink);
+  border-radius: 6px;
 }
-.pomo-bar > div {
+.pod-bar > div {
   height: 100%;
-  background: var(--pomo-accent);
-  border-right: 2px solid var(--pomo-ink);
+  background: var(--pod-lcd-ink);
   transition: width 0.3s linear;
 }
-.pomo-bar > div[style*="width: 0%"] {
-  border-right: 0;
+.pod-now {
+  padding-top: 9px;
+  border-top: 2px dashed var(--pod-lcd-dim);
 }
-
-.pomo-controls {
-  display: flex;
-  gap: 8px;
-  margin-top: 16px;
-}
-.pomo-start,
-.pomo-btn,
-.pomo-music-row {
-  padding: 12px 14px;
-  font-size: 15px;
-  font-weight: 700;
-  border-radius: 12px;
-  transition: all 0.15s;
-}
-.pomo-start {
-  flex: 1;
-  background: var(--pomo-accent);
-  border: 2px solid var(--pomo-ink);
-  box-shadow: 0 3px var(--pomo-ink);
-}
-.pomo-btn,
-.pomo-music-row {
-  background: #fff;
-  border: 2px solid var(--pomo-ink);
-  box-shadow: 0 3px var(--pomo-ink);
-}
-.pomo-note[aria-pressed="true"] {
-  background: var(--pomo-accent);
-}
-.pomo-start:hover,
-.pomo-btn:hover,
-.pomo-music-row:hover {
-  transform: translateY(2px);
-  box-shadow: 0 1px var(--pomo-ink);
-}
-.pomo-start:active,
-.pomo-btn:active,
-.pomo-music-row:active {
-  transform: translateY(3px);
-  box-shadow: 0 0 var(--pomo-ink);
-}
-
-.pomo-music-row {
-  width: 100%;
-  margin-top: 14px;
+.pod-track {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
   font-size: 14px;
+  font-weight: 800;
 }
-
-.pomo-music-panel {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  margin-top: 12px;
-}
-.pomo-option {
-  padding: 10px 14px;
-  text-align: left;
-  font-size: 14px;
+.pod-sub {
+  margin-top: 1px;
+  font-size: 11px;
   font-weight: 600;
-  background: #fff;
-  border: 2px solid var(--pomo-ink);
-  border-radius: 12px;
+  color: var(--pod-lcd-dim);
 }
-.pomo-option:hover {
-  background: #f5f5f5;
-}
-.pomo-option[aria-pressed="true"] {
-  background: var(--pomo-accent);
-}
-.pomo-volume {
-  display: grid;
-  gap: 6px;
-  text-align: left;
-  font-size: 13px;
+.pod-overlay {
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+  left: 10px;
+  padding: 9px 10px;
+  font-size: 12px;
   font-weight: 700;
-  color: #444;
+  background: var(--pod-lcd);
+  border: 2px solid var(--pod-lcd-ink);
+  border-radius: 8px;
+  opacity: 0;
+  transform: translateY(6px);
+  pointer-events: none;
+  transition: opacity 0.18s, transform 0.18s;
 }
-.pomo-volume input {
-  accent-color: var(--pomo-ink);
+.pod-overlay.is-shown {
+  opacity: 1;
+  transform: none;
+}
+.pod-volume {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.pod-volume-segs {
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(20, 1fr);
+  gap: 2px;
+  height: 10px;
+}
+.pod-volume-segs i {
+  border-radius: 1px;
+  background: rgba(24, 38, 31, 0.18);
+}
+.pod-volume-segs i.is-on {
+  background: var(--pod-lcd-ink);
+}
+
+/* ---------- click wheel ---------- */
+.pod-wheel {
+  position: relative;
+  width: 84%;
+  aspect-ratio: 1;
+  margin: 24px auto 0;
+  background: var(--pod-wheel);
+  border: 3px solid var(--pod-ink);
+  border-radius: 50%;
+  box-shadow: 4px 4px 0 var(--pod-ink);
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  cursor: grab;
+}
+.pod-wheel:active {
+  cursor: grabbing;
+}
+.pod .pod-wb {
+  position: absolute;
+  display: grid;
+  place-items: center;
+  padding: 10px;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  line-height: 1;
+  background: none;
+  border: 0;
+  border-radius: 10px;
+}
+.pod-wb svg {
+  display: block;
+  width: 18px;
+  height: 18px;
+}
+.pod-wb-menu { top: 5%; left: 50%; transform: translateX(-50%); }
+.pod-wb-play { bottom: 5%; left: 50%; transform: translateX(-50%); }
+.pod-wb-prev { top: 50%; left: 4%; transform: translateY(-50%); }
+.pod-wb-next { top: 50%; right: 4%; transform: translateY(-50%); }
+.pod .pod-wb:active {
+  color: #3da1cc;
+}
+.pod .pod-center {
+  position: absolute;
+  inset: 31%;
+  display: grid;
+  place-items: center;
+  background: var(--pod-button);
+  border: 3px solid var(--pod-ink);
+  border-radius: 50%;
+  box-shadow: 3px 3px 0 var(--pod-ink);
+  transition: transform 0.06s, box-shadow 0.06s, background 0.3s;
+}
+.pod-center svg {
+  width: 26px;
+  height: 26px;
+}
+.pod .pod-center:active {
+  transform: translate(3px, 3px);
+  box-shadow: none;
+}
+
+/* Desktop: the pod is always visible, so the phone pieces stay hidden. */
+.pod-mini,
+.pod-done {
+  display: none;
+}
+
+/* ---------- phones: mini player + full-screen sheet ---------- */
+@media (max-width: 860px) {
+  .pod-mini {
+    position: fixed;
+    right: 12px;
+    bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+    left: 12px;
+    z-index: 20;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 8px 8px 10px;
+    background: var(--pod-skin);
+    border: 3px solid var(--pod-ink);
+    border-radius: 18px;
+    box-shadow: 5px 5px 0 var(--pod-ink);
+  }
+  .pod .pod-mini-open {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 0;
+    text-align: left;
+    background: none;
+    border: 0;
+  }
+  .pod-mini-time {
+    padding: 6px 9px;
+    font-size: 20px;
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+    color: var(--pod-lcd-ink);
+    background: var(--pod-lcd);
+    border: 2px solid var(--pod-ink);
+    border-radius: 10px;
+  }
+  .pod-mini-info {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+  .pod-mini-mode {
+    font-size: 14px;
+    font-weight: 800;
+  }
+  .pod-mini-sound {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    font-size: 12px;
+    font-weight: 600;
+  }
+  .pod .pod-mini-play {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 46px;
+    height: 46px;
+    background: var(--pod-button);
+    border: 3px solid var(--pod-ink);
+    border-radius: 50%;
+  }
+  .pod-mini-play svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  .pod-sheet {
+    position: fixed;
+    inset: 0;
+    z-index: 30;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: calc(env(safe-area-inset-top, 0px) + 16px) 16px calc(env(safe-area-inset-bottom, 0px) + 16px);
+    background: rgba(26, 26, 26, 0.55);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s;
+  }
+  .pod--open .pod-sheet {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .pod--open .pod-mini {
+    visibility: hidden;
+  }
+  .pod-sheet .pod-body {
+    max-width: min(330px, 88vw);
+  }
+  .pod .pod-done {
+    display: block;
+    margin-top: 22px;
+    padding: 9px 18px;
+    font-size: 15px;
+    font-weight: 800;
+    background: #ffffff;
+    border: 3px solid var(--pod-ink);
+    border-radius: 12px;
+    box-shadow: 3px 3px 0 var(--pod-ink);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .pomo-bar > div,
-  .pomo-start,
-  .pomo-btn,
-  .pomo-music-row {
+  .pod-screen,
+  .pod-bar > div,
+  .pod-overlay,
+  .pod .pod-center,
+  .pod-sheet {
     transition: none;
   }
 }

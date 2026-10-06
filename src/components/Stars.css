@@ -1,0 +1,70 @@
+/* The dome sits behind the headline at the top of the homepage */
+.main--wide.has-stars {
+  position: relative;
+  padding-top: 110px; /* room for the dome above the headline */
+}
+.star-dome {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  z-index: 0;
+  width: min(1400px, calc(100vw - 32px));
+  transform: translateX(-50%);
+  overflow: visible;
+  pointer-events: none;
+}
+.main--wide > .title,
+.main--wide > .subtitle,
+.main--wide > .home-layout {
+  position: relative;
+  z-index: 1;
+}
+
+.star-gold {
+  fill: #fbbf24;
+  stroke: #1a1a1a;
+  stroke-width: 1.4;
+  stroke-linejoin: round;
+}
+.star-ink {
+  fill: #ffffff;
+  stroke: #1a1a1a;
+  stroke-width: 1.4;
+  stroke-linejoin: round;
+}
+.star-gold-dot {
+  fill: #f2a900;
+}
+.star-ink-dot {
+  fill: #1a1a1a;
+  opacity: 0.55;
+}
+
+/* Gentle twinkle */
+.star {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: star-twinkle 3s ease-in-out infinite;
+}
+@keyframes star-twinkle {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.35; transform: scale(0.7); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .star { animation: none; }
+}
+
+/* Phones: the dome shrinks with the screen, so it needs less room */
+@media (max-width: 700px) {
+  .main--wide.has-stars {
+    padding-top: 64px;
+    overflow-x: clip; /* the wider star field is trimmed at the screen edges */
+  }
+  .star-dome {
+    width: 180vw; /* drawn wider so the stars stay a visible size on a small screen */
+  }
+  .star-side {
+    display: none;
+  }
+}

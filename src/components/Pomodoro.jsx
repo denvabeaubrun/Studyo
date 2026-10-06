@@ -23,6 +23,7 @@ const YT_SONGS = [
   { title: "Mercury", artist: "Sleeping At Last", url: "https://youtu.be/pNUR0fOMpCs" },
   { title: "The Night We Met", artist: "Lord Huron", url: "https://youtu.be/KtlgYxa6BMU" },
   { title: "Ghost", artist: "Jacob Lee", url: "https://youtu.be/gxh1EYJVhfQ" },
+  { title: "Night Begins to Shine", artist: "B.E.R", url: "https://youtu.be/lSLXS0bjSCs" },
 ];
 
 function ytId(url) {

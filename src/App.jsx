@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import Critters from './components/Critters';
+import Stars from './components/Stars';
 import Pomodoro from './components/Pomodoro';
 import UploadModal from './components/UploadModal';
 import FlashcardViewer from './components/FlashcardViewer';
@@ -169,7 +170,9 @@ function App() {
       <header className="header">
         <h1 className="logo">📚 Studyo</h1>
       </header>
-      <main className="main main--wide">
+      <main className={`main main--wide${selectedSubject === null ? ' has-stars' : ''}`}>
+        {/* Dome of twinkling stars over the headline, on the homepage only */}
+        {selectedSubject === null && <Stars />}
         <h2 className="title">
           Stay{" "}
           <span className="marker-circle">

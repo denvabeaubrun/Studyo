@@ -170,7 +170,19 @@ function App() {
         <h1 className="logo">📚 Studyo</h1>
       </header>
       <main className="main main--wide">
-        <h2 className="title">Stay studious with Studyo</h2>
+        <<h2 className="title">
+  Stay{" "}
+  <span className="marker-circle">
+    studious
+    <svg viewBox="0 0 200 80" preserveAspectRatio="none" aria-hidden="true">
+      <path
+        pathLength="1"
+        d="M 34 14 C 85 1, 172 3, 192 28 C 206 52, 150 76, 96 75 C 40 74, 2 60, 8 38 C 12 20, 48 9, 78 7"
+      />
+    </svg>
+  </span>{" "}
+  with Studyo
+</h2>
         <p className="subtitle">Create flashcards, mock quizzes and more</p>
 
         <div className="home-layout">

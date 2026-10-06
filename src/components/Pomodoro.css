@@ -130,6 +130,35 @@
   background: var(--pod-lcd-ink);
   transition: width 0.3s linear;
 }
+/* ---------- YouTube video mode ---------- */
+.pod-video {
+  display: none;
+}
+.pod-screen--video .pod-video {
+  display: block;
+  height: 200px;           /* YouTube's minimum player size is 200 x 200 */
+  min-width: 200px;
+  margin: 8px 0 0;
+  overflow: hidden;
+  background: #000;
+  border: 2px solid var(--pod-lcd-ink);
+  border-radius: 6px;
+}
+.pod-video iframe {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+.pod-screen--video .pod-digits,
+.pod-screen--video .pod-label {
+  display: none;
+}
+.pod-status-time {
+  margin-left: 8px;
+  font-variant-numeric: tabular-nums;
+}
+
 .pod-now {
   padding-top: 9px;
   border-top: 2px dashed var(--pod-lcd-dim);

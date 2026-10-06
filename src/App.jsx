@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import Critters from './components/Critters';
 import Pomodoro from './components/Pomodoro';
 import UploadModal from './components/UploadModal';
 import FlashcardViewer from './components/FlashcardViewer';
@@ -323,7 +324,9 @@ function App() {
             <Pomodoro open={podOpen} onOpenChange={setPodOpen} />
           </aside>
         </div>
-      </main>
+       </main>
+
+      <Critters />
 
       {showUploadModal && (
         <UploadModal

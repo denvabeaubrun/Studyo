@@ -11,9 +11,46 @@ const MODE_ORDER = ["focus", "short", "long"];
 // Drop audio files in public/music and list them here.
 // BASE_URL keeps paths working on GitHub Pages (/Studyo/).
 const BASE = import.meta.env.BASE_URL;
+// artist shows on the pod's screen, which also covers credit for licenses that ask for it.
 const TRACKS = [
-  // { title: "Track name", src: `${BASE}music/track-1.mp3` },
+  // { title: "Track name", artist: "Artist name", src: `${BASE}music/track-name.mp3` },
 ];
+
+// Your YouTube songs. Paste each song's YouTube link into url.
+// Any link format works (youtube.com/watch?v=..., youtu.be/..., music.youtube.com/...).
+// If a video won't play here, its uploader has blocked embedding: try a lyric or audio upload instead.
+const YT_SONGS = [
+  { title: "Saturn", artist: "Sleeping At Last", url: "" },
+  { title: "Faded", artist: "Alan Walker", url: "" },
+  { title: "Mercury", artist: "Sleeping At Last", url: "" },
+  { title: "The Night We Met", artist: "Lord Huron", url: "" },
+];
+
+function ytId(url) {
+  const m = (url || "").match(/(?:v=|youtu\.be\/|embed\/|shorts\/)([\w-]{11})/);
+  return m ? m[1] : null;
+}
+
+// Loads YouTube's player script once, the first time a song is picked.
+let ytApiPromise = null;
+function loadYouTubeApi() {
+  if (window.YT && window.YT.Player) return Promise.resolve();
+  if (!ytApiPromise) {
+    ytApiPromise = new Promise((resolve) => {
+      const prev = window.onYouTubeIframeAPIReady;
+      window.onYouTubeIframeAPIReady = () => {
+        if (prev) prev();
+        resolve();
+      };
+      const script = document.createElement("script");
+      script.src = "https://www.youtube.com/iframe_api";
+      document.head.appendChild(script);
+    });
+  }
+  return ytApiPromise;
+}
+
+const isPhone = () => window.matchMedia("(max-width: 860px)").matches;
 
 const AMBIENT = [
   { id: "rain", label: "Rain" },
@@ -70,8 +107,9 @@ export default function Pomodoro({ open = false, onOpenChange = () => {} }) {
   const [running, setRunning] = useState(false);
   const [done, setDone] = useState(0);
 
-  const [sound, setSound] = useState("off"); // off | rain | brown | track
+  const [sound, setSound] = useState("off"); // off | rain | brown | track | youtube
   const [trackIdx, setTrackIdx] = useState(0);
+  const [ytIdx, setYtIdx] = useState(0);
   const [volume, setVolume] = useState(0.5);
 
   const [toast, setToast] = useState("");
@@ -87,6 +125,13 @@ export default function Pomodoro({ open = false, onOpenChange = () => {} }) {
   const suppressClick = useRef(false);
   const toastTimer = useRef(null);
   const volumeTimer = useRef(null);
+
+  // YouTube player
+  const ytWrap = useRef(null);
+  const ytPlayer = useRef(null);
+  const ytReady = useRef(false);
+  const ytLoadedId = useRef(null);
+  const latest = useRef({});
 
   const total = MODES[mode].minutes * 60;
 
@@ -241,10 +286,74 @@ export default function Pomodoro({ open = false, onOpenChange = () => {} }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sound, trackIdx]);
 
+  // YouTube songs. The player is created the first time one is picked, then reused.
+  useEffect(() => {
+    if (sound !== "youtube") {
+      if (ytReady.current) ytPlayer.current.pauseVideo();
+      return;
+    }
+    const id = ytId(YT_SONGS[ytIdx].url);
+    if (!id) {
+      flash(`Add a YouTube link for "${YT_SONGS[ytIdx].title}" in Pomodoro.jsx`);
+      return;
+    }
+    let cancelled = false;
+    loadYouTubeApi().then(() => {
+      if (cancelled) return;
+      if (!ytPlayer.current) {
+        const el = document.createElement("div");
+        ytWrap.current.appendChild(el);
+        ytLoadedId.current = id;
+        ytPlayer.current = new window.YT.Player(el, {
+          width: "100%",
+          height: "100%",
+          videoId: id,
+          playerVars: { playsinline: 1, rel: 0 },
+          events: {
+            onReady: (e) => {
+              ytReady.current = true;
+              e.target.setVolume(Math.round(latest.current.volume * 100));
+              const want = ytId(YT_SONGS[latest.current.ytIdx].url);
+              if (latest.current.sound !== "youtube") return;
+              if (want && want !== ytLoadedId.current) {
+                ytLoadedId.current = want;
+                e.target.loadVideoById(want);
+              } else {
+                e.target.playVideo();
+              }
+            },
+            onStateChange: (e) => {
+              if (e.data === window.YT.PlayerState.ENDED) latest.current.nextSong();
+            },
+            onError: () => {
+              latest.current.flash("That video can't play here. Skipping to the next song.");
+              latest.current.nextSong();
+            },
+          },
+        });
+      } else if (ytReady.current) {
+        if (ytLoadedId.current !== id) {
+          ytLoadedId.current = id;
+          ytPlayer.current.loadVideoById(id);
+        } else {
+          ytPlayer.current.playVideo();
+        }
+      }
+    });
+    return () => { cancelled = true; };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sound, ytIdx]);
+
+  // On phones the video can't keep playing behind the closed sheet, so it pauses.
+  useEffect(() => {
+    if (!open && sound === "youtube" && isPhone()) setSound("off");
+  }, [open, sound]);
+
   // Volume.
   useEffect(() => {
     if (masterRef.current) masterRef.current.gain.value = volume * (AMBIENT_GAIN[sound] ?? 1);
     if (audioRef.current) audioRef.current.volume = volume;
+    if (ytReady.current) ytPlayer.current.setVolume(Math.round(volume * 100));
   }, [volume, sound]);
 
   // Escape closes the phone sheet.
@@ -307,6 +416,7 @@ export default function Pomodoro({ open = false, onOpenChange = () => {} }) {
   const choose = (opt) => {
     setSound(opt.id);
     if (opt.id === "track") setTrackIdx(opt.idx);
+    if (opt.id === "youtube") setYtIdx(opt.idx);
     if (opt.id !== "off") lastChoice.current = opt;
   };
 
@@ -318,11 +428,16 @@ export default function Pomodoro({ open = false, onOpenChange = () => {} }) {
 
   // Every sound except "off", in the order the skip buttons move through them.
   const playable = [
-    ...AMBIENT,
+    ...YT_SONGS.map((t, i) => ({ id: "youtube", idx: i, label: t.title })),
     ...TRACKS.map((t, i) => ({ id: "track", idx: i, label: t.title })),
+    ...AMBIENT,
   ];
-  const matches = (o, ref) => o.id === ref.id && (o.id !== "track" || o.idx === ref.idx);
-  const currentIdx = sound === "off" ? -1 : playable.findIndex((o) => matches(o, { id: sound, idx: trackIdx }));
+  const hasIdx = (id) => id === "track" || id === "youtube";
+  const matches = (o, ref) => o.id === ref.id && (!hasIdx(o.id) || o.idx === ref.idx);
+  const currentIdx =
+    sound === "off"
+      ? -1
+      : playable.findIndex((o) => matches(o, { id: sound, idx: sound === "youtube" ? ytIdx : trackIdx }));
 
   const skip = (dir) => {
     tick();
@@ -330,11 +445,19 @@ export default function Pomodoro({ open = false, onOpenChange = () => {} }) {
     choose(playable[(from + dir + playable.length) % playable.length]);
   };
 
+  // When a YouTube song ends, go to the next YouTube song.
+  const nextSong = () => setYtIdx((i) => (i + 1) % YT_SONGS.length);
+  latest.current = { volume, sound, ytIdx, nextSong, flash };
+
   // Center button: the timer and the music start and stop together.
   const toggleTimer = () => {
     const next = !running;
     setRunning(next);
-    if (next && sound === "off") choose(lastChoice.current);
+    if (next && sound === "off") {
+      // A YouTube song needs the full pod open on phones, since the video has to be visible.
+      if (lastChoice.current.id === "youtube" && isPhone() && !open) onOpenChange(true);
+      choose(lastChoice.current);
+    }
     if (!next) setSound("off");
   };
 
@@ -358,9 +481,14 @@ export default function Pomodoro({ open = false, onOpenChange = () => {} }) {
   const soundLabel =
     sound === "off"
       ? "Music off"
+      : sound === "youtube"
+      ? YT_SONGS[ytIdx].title
       : sound === "track"
       ? TRACKS[trackIdx].title
       : AMBIENT.find((a) => a.id === sound).label;
+  const artist =
+    sound === "youtube" ? YT_SONGS[ytIdx].artist : sound === "track" ? TRACKS[trackIdx].artist : null;
+  const videoMode = sound === "youtube";
 
   const progress = 1 - secondsLeft / total;
   const timerLabel = running ? "Pause timer" : "Start timer";
@@ -389,9 +517,12 @@ export default function Pomodoro({ open = false, onOpenChange = () => {} }) {
         <section className="pod-body" aria-label="Pomodoro Timer" onKeyDown={onPodKey}>
           <h3 className="pod-title">⏱ Pomodoro Timer</h3>
 
-          <div className="pod-screen">
+          <div className={`pod-screen${videoMode ? " pod-screen--video" : ""}`}>
             <div className="pod-status">
-              <span>{MODES[mode].title}</span>
+              <span>
+                {MODES[mode].title}
+                {videoMode && <span className="pod-status-time">{fmt(secondsLeft)}</span>}
+              </span>
               <span className="pod-status-right">
                 <span className={`pod-note${sound !== "off" ? " is-on" : ""}`} aria-hidden="true">♪</span>
                 <span className="pod-battery" aria-hidden="true">
@@ -399,6 +530,9 @@ export default function Pomodoro({ open = false, onOpenChange = () => {} }) {
                 </span>
               </span>
             </div>
+
+            {/* YouTube's player shows here while a song plays; their rules require it to stay visible */}
+            <div className="pod-video" ref={ytWrap} />
 
             <div className="pod-digits" role="timer">{fmt(secondsLeft)}</div>
             <div className="pod-label">{sessionLabel}</div>
@@ -409,7 +543,9 @@ export default function Pomodoro({ open = false, onOpenChange = () => {} }) {
             <div className="pod-now">
               <div className="pod-track">{soundLabel}</div>
               <div className="pod-sub">
-                {sound === "off" ? "Press ▶❚❚ to play" : `Sound ${currentIdx + 1} of ${playable.length}`}
+                {sound === "off"
+                  ? "Press ▶❚❚ to play"
+                  : artist || `Sound ${currentIdx + 1} of ${playable.length}`}
               </div>
             </div>
 

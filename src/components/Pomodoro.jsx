@@ -16,14 +16,13 @@ const TRACKS = [
   // { title: "Track name", artist: "Artist name", src: `${BASE}music/track-name.mp3` },
 ];
 
-// Your YouTube songs. Paste each song's YouTube link into url.
-// Any link format works (youtube.com/watch?v=..., youtu.be/..., music.youtube.com/...).
-// If a video won't play here, its uploader has blocked embedding: try a lyric or audio upload instead.
+// My favortite YouTube songs
 const YT_SONGS = [
-  { title: "Saturn", artist: "Sleeping At Last", url: "" },
-  { title: "Faded", artist: "Alan Walker", url: "" },
-  { title: "Mercury", artist: "Sleeping At Last", url: "" },
-  { title: "The Night We Met", artist: "Lord Huron", url: "" },
+  { title: "Saturn", artist: "Sleeping At Last", url: "https://youtu.be/dzNvk80XY9s" },
+  { title: "Faded", artist: "Alan Walker", url: "https://youtu.be/60ItHLz5WEA" },
+  { title: "Mercury", artist: "Sleeping At Last", url: "https://youtu.be/pNUR0fOMpCs" },
+  { title: "The Night We Met", artist: "Lord Huron", url: "https://youtu.be/KtlgYxa6BMU" },
+  { title: "Ghost", artist: "Justin Bieber", url: "https://youtu.be/gxh1EYJVhfQ" },
 ];
 
 function ytId(url) {

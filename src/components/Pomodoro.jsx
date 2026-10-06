@@ -22,7 +22,7 @@ const YT_SONGS = [
   { title: "Faded", artist: "Alan Walker", url: "https://youtu.be/60ItHLz5WEA" },
   { title: "Mercury", artist: "Sleeping At Last", url: "https://youtu.be/pNUR0fOMpCs" },
   { title: "The Night We Met", artist: "Lord Huron", url: "https://youtu.be/KtlgYxa6BMU" },
-  { title: "Ghost", artist: "Justin Bieber", url: "https://youtu.be/gxh1EYJVhfQ" },
+  { title: "Ghost", artist: "Jacob Lee", url: "https://youtu.be/gxh1EYJVhfQ" },
 ];
 
 function ytId(url) {

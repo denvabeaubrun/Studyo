@@ -1,72 +1,125 @@
 // generateCards.js
 //
-// Turns raw notes text into flashcards.
+// Turns raw notes text into flashcards, with no backend needed.
+// It understands several common note formats:
+//   Term: definition          Term - definition        Term — definition
+//   Term = definition         Term -> definition       Term<TAB>definition
+//   Term:                     (definition on the next line)
+//   Term                      (short line, then its definition on the next line)
+//   definition
+// Bullets, numbering and **bold** markers are ignored.
+// If very few cards are found, long sentences become fill-in-the-blank cards.
 //
-// TODO (real AI generation):
-// Replace the body of this function with a call to your backend/serverless
-// proxy, which itself calls the Anthropic API. Do NOT call
-// https://api.anthropic.com directly from this client-side code in the
-// deployed app — that would require embedding an API key in the bundle,
-// which anyone can read from dev tools. A tiny serverless function
-// (Vercel, Netlify, Cloudflare Workers, etc.) that holds the key and
-// forwards the notes text is the safe version of this.
-//
-// Expected real flow:
-//   const res = await fetch('/api/generate-cards', {
-//     method: 'POST',
-//     headers: { 'Content-Type': 'application/json' },
-//     body: JSON.stringify({ notes: text })
-//   });
-//   const { cards } = await res.json();
-//   return cards;
-//
-// For now, this uses two simple heuristics so the app works end-to-end
-// without a backend:
-//   1. Lines shaped like "Term: definition" become front/back cards.
-//   2. If there aren't enough of those, longer sentences get turned into
-//      cloze ("fill in the blank") cards by hiding one key word.
+// TODO (real AI generation): replace the body with a call to your serverless
+// proxy that holds the Anthropic API key. Never put the key in client code.
 
-export function generateCards(text, maxCards = 12) {
-  const cards = [];
+const BULLET = /^\s*(?:[-*•▪◦●‣]|\d{1,3}[.)])\s+/;
+const SEPARATORS = [
+  /\s[—–]\s/,        // Term — definition
+  /\s-\s/,           // Term - definition
+  /\s->\s|\s→\s/,    // Term -> definition
+  /\s=\s/,           // Term = definition
+  /\t+/,             // Term<TAB>definition
+];
 
-  const lines = text
-    .split(/\n+/)
-    .map(l => l.trim())
-    .filter(Boolean);
+const wordCount = (s) => s.split(/\s+/).filter(Boolean).length;
+const looksLikeTerm = (s) => s.length > 1 && s.length <= 80 && wordCount(s) <= 10;
 
-  for (const line of lines) {
-    if (cards.length >= maxCards) break;
-    const colonIndex = line.indexOf(':');
-    if (colonIndex > 0 && colonIndex < line.length - 1) {
-      const front = line.slice(0, colonIndex).trim();
-      const back = line.slice(colonIndex + 1).trim();
-      if (front.length > 1 && back.length > 1 && front.length < 80) {
-        cards.push({ front, back });
+function clean(line) {
+  return line
+    .replace(BULLET, '')
+    .replace(/\*\*|__/g, '')
+    .replace(/^#+\s*/, '')
+    .trim();
+}
+
+// Try to split one line into [term, definition].
+function splitLine(line) {
+  // Colon: skip times (10:30) and links (https://...)
+  const colon = line.search(/:(?!\/\/)(?!\d)/);
+  if (colon > 0 && colon < line.length - 1) {
+    const term = line.slice(0, colon).trim();
+    const def = line.slice(colon + 1).trim();
+    if (looksLikeTerm(term) && def.length > 1) return [term, def];
+  }
+  for (const sep of SEPARATORS) {
+    const m = line.match(sep);
+    if (m && m.index > 0) {
+      const term = line.slice(0, m.index).trim();
+      const def = line.slice(m.index + m[0].length).trim();
+      if (looksLikeTerm(term) && def.length > 1) return [term, def];
+    }
+  }
+  return null;
+}
+
+export function generateCards(text, maxCards = 100) {
+  const raw = text.split(/\r?\n/).map((l) => l.trim()).filter(Boolean);
+  const lines = raw.map(clean).filter(Boolean);
+  const pairs = [];
+
+  // Pass 1: one-line pairs, plus "Term:" with the definition on the next line.
+  const used = new Set();
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+    const parts = splitLine(line);
+    if (parts) {
+      pairs.push(parts);
+      used.add(i);
+    } else if (line.endsWith(':') && looksLikeTerm(line.slice(0, -1)) && lines[i + 1]) {
+      pairs.push([line.slice(0, -1).trim(), lines[i + 1]]);
+      used.add(i);
+      used.add(i + 1);
+      i++;
+    }
+  }
+
+  // Pass 2: alternating lines (short term line, then a longer definition line).
+  // Only used when pass 1 found few cards, so mixed notes don't get mispaired.
+  if (pairs.length < Math.max(3, lines.length / 4)) {
+    const alt = [];
+    for (let i = 0; i + 1 < lines.length; i++) {
+      const a = lines[i];
+      const b = lines[i + 1];
+      if (looksLikeTerm(a) && !/[.!?]$/.test(a) && b.length > a.length && !splitLine(b)) {
+        alt.push([a, b]);
+        i++;
       }
     }
-  }
-
-  if (cards.length < 5) {
-    const sentences = text
-      .split(/(?<=[.?!])\s+/)
-      .map(s => s.trim())
-      .filter(s => s.length > 25 && s.length < 240);
-
-    for (const sentence of sentences) {
-      if (cards.length >= maxCards) break;
-      const words = sentence.split(/\s+/).filter(w => w.replace(/[.,!?]/g, '').length > 5);
-      if (words.length === 0) continue;
-      const targetWord = words[Math.floor(words.length / 2)];
-      const cleanTarget = targetWord.replace(/[.,!?]$/, '');
-      const clozed = sentence.replace(targetWord, '_____');
-      cards.push({ front: clozed, back: cleanTarget });
+    if (alt.length > pairs.length) {
+      pairs.length = 0;
+      pairs.push(...alt);
     }
   }
 
-  return cards.map((c, i) => ({
+  // Pass 3: fill-in-the-blank cards from long sentences, only if still thin.
+  if (pairs.length < 5) {
+    const sentences = text
+      .split(/(?<=[.?!])\s+/)
+      .map((s) => clean(s))
+      .filter((s) => s.length > 25 && s.length < 240);
+    for (const sentence of sentences) {
+      if (pairs.length >= maxCards) break;
+      const words = sentence.split(/\s+/).filter((w) => w.replace(/[.,!?]/g, '').length > 5);
+      if (words.length === 0) continue;
+      const target = words[Math.floor(words.length / 2)];
+      pairs.push([sentence.replace(target, '_____'), target.replace(/[.,!?]$/, '')]);
+    }
+  }
+
+  // Drop duplicate terms, then apply the cap.
+  const seen = new Set();
+  const unique = pairs.filter(([front]) => {
+    const key = front.toLowerCase();
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+
+  return unique.slice(0, maxCards).map(([front, back], i) => ({
     id: Date.now() + i,
-    front: c.front,
-    back: c.back,
-    mastered: false
+    front,
+    back,
+    mastered: false,
   }));
 }

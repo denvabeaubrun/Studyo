@@ -684,3 +684,17 @@ body {
   font-size: 18px;
   color: #444;
 }
+/* Flashcard fix: front/back swap on click */
+.flashcard-back {
+  transform: none;
+  color: #1a1a1a;
+}
+.flashcard-flipped .flashcard-front {
+  visibility: hidden;
+}
+.flashcard-flipped .flashcard-back {
+  visibility: visible;
+}
+.flashcard:not(.flashcard-flipped) .flashcard-back {
+  visibility: hidden;
+}

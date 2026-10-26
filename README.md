@@ -1,31 +1,28 @@
 # Studyo
 
-**Studyo** is an AI-assisted study app designed to make studying easier and more organized. Students can organize their coursework by subject and class, upload study notes, and turn those notes into interactive flashcards and quizzes.
+**Studyo** is a study app designed to make studying easier and more organized. Students can organize their coursework by subject and class, upload study notes, and turn those notes into interactive flashcards and quizzes.
 
 🔗 **Live Demo:** https://denvabeaubrun.github.io/Studyo/
 
 ## Features
 
 * 📚 **Subject & Class Organization**
-  Organize study materials by subject and class.
+  Organize study sets by subject and class, each with its own color and emoji.
 
 * 📝 **Study Notes Upload**
-  Add study material by uploading notes or entering text.
+  Paste notes or upload `.txt` / `.md` files.
 
-* 🧠 **AI-Assisted Flashcards**
-  Turn study notes into flashcards automatically.
+* 🧠 **Automatic Flashcards**
+  Turns notes into flashcards by detecting formats like `Term: definition`, `Term - definition`, and term/definition line pairs. Falls back to fill-in-the-blank cards from longer sentences.
 
 * ❓ **Quiz Mode**
-  Generate multiple-choice quizzes from study sets and track quiz scores.
+  Multiple-choice quizzes built from a study set, with randomized answer choices and a score.
 
-* ⏱️ **Pomodoro Study Sessions**
-  Use focused study intervals without leaving the app.
+* ⏱️ **Pomodoro Timer**
+  Focus (25 min), short break (5 min), and long break (15 min) modes, with a built-in music player.
 
-* 📈 **Progress Tracking**
-  Track mastery and study progress for individual study sets.
-
-* 🎮 **Additional Study Modes**
-  Designed to support additional interactive study formats such as games.
+* 📈 **Mastery Tracking**
+  Mark cards "Got it" or "Still learning" and see a mastery progress bar for each set.
 
 ## How It Works
 
@@ -38,7 +35,14 @@
 
 ### Example
 
-A student studying for a biology exam can upload notes covering topics such as cell structure and mitosis. Studyo processes the material and can generate flashcards and a mock quiz from the uploaded content. The student can then complete a focused study session and record their quiz results.
+A student studying for a biology exam can paste notes such as:
+
+```text
+Mitochondria: The powerhouse of the cell
+Ribosome - Builds proteins from amino acids
+```
+
+Studyo turns each line into a flashcard (front: the term, back: the definition). The student can then flip through the cards, mark which ones they've mastered, take a multiple-choice quiz, and use the Pomodoro timer to stay focused.
 
 ## Technology
 
@@ -49,31 +53,33 @@ A student studying for a biology exam can upload notes covering topics such as c
 * JavaScript
 * CSS
 
-### AI
-
-* Anthropic Claude API
-
 ### Deployment
 
-* GitHub Pages
+* GitHub Pages (via GitHub Actions)
 
 ### Version Control
 
-* GitHub
+* Git & GitHub
+
+### Planned
+
+* Anthropic Claude API for AI-powered card generation
 
 ## Project Structure
 
 ```text
 src/
 ├── components/
-│   ├── UploadModal.jsx
-│   ├── FlashcardViewer.jsx
-│   └── QuizView.jsx
-│
+│   ├── UploadModal.jsx       # Paste or upload notes
+│   ├── FlashcardViewer.jsx   # Flip through cards, mark mastery
+│   ├── QuizView.jsx          # Multiple-choice quiz
+│   ├── Pomodoro.jsx          # Study timer + music player
+│   ├── Stars.jsx             # Decorative star field (homepage)
+│   └── Critters.jsx          # Decorative animated characters
 ├── utils/
-│   └── generateCards.js
-│
-├── App.jsx
+│   └── generateCards.js      # Notes → flashcards logic
+├── App.jsx                   # Main app: subjects, classes, sets, navigation
+├── Layout.css
 └── index.css
 ```
 
@@ -83,7 +89,7 @@ src/
 Acts as the central hub of the application and manages the flow between subjects, classes, study sets, flashcards, and quizzes.
 
 **`utils/generateCards.js`**
-Processes study notes and generates flashcards. The current implementation uses text-based heuristics as a stand-in for a full AI call.
+Processes study notes and generates flashcards using text-pattern rules. It recognizes common note formats (colons, dashes, arrows, equals signs, tabs, and term/definition line pairs) and removes duplicate terms.
 
 **`components/UploadModal.jsx`**
 Provides the interface for adding study material through pasted notes or uploaded `.txt`/`.md` files.
@@ -94,11 +100,14 @@ Displays study cards one at a time and allows students to mark cards as either "
 **`components/QuizView.jsx`**
 Creates multiple-choice quizzes from study sets, including randomized answer choices and score tracking.
 
+**`components/Pomodoro.jsx`**
+A study timer with focus and break modes, plus a music player for focused sessions.
+
 ## Development
 
 ### Prerequisites
 
-* Node.js
+* Node.js (version 20 or later recommended)
 * npm
 
 ### Installation
@@ -143,21 +152,29 @@ To preview the production build locally:
 npm run preview
 ```
 
+## Deployment
+
+Every push to `main` automatically builds the app and deploys it to GitHub Pages through the workflow in `.github/workflows/deploy.yml`.
+
 ## Project Status
 
 Studyo is an ongoing project developed for **CISC 4900**.
 
-Current development includes the core subject/class organization, PDF upload flow, and GitHub Pages deployment. Planned development includes expanded AI generation, quiz mode, Pomodoro functionality, and progress tracking.
+**Working now:** subject/class organization, notes upload (`.txt`/`.md` or pasted text), automatic flashcard generation, flashcard study mode with mastery tracking, quiz mode, Pomodoro timer, and GitHub Pages deployment.
+
+**Known limitations:**
+
+* Flashcards are generated with text-pattern rules, not AI yet.
+* PDF files can't be uploaded directly; paste the text instead.
+* Data isn't saved yet: refreshing the page resets subjects, sets, and progress.
 
 ## Future Development
 
-* Full AI-powered study material generation
-* PDF note processing
-* Expanded quiz functionality
-* Pomodoro timer
-* Progress and mastery tracking
+* AI-powered flashcard and quiz generation (Claude API via a secure server-side proxy)
+* Direct PDF upload
+* Saving data between sessions (localStorage or a database)
+* Quiz score history over time
 * Game-based study modes
-* Additional study formats
 
 ## Author
 

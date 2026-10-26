@@ -1,13 +1,26 @@
+// FlashcardViewer.jsx
+//
+// Study mode: shows one card at a time. Click a card to flip it, use Prev/Next
+// to move between cards, and mark each card "Got it" or "Still learning".
+//
+// Props:
+//   set           - the study set being studied: { title, cards: [{ id, front, back, mastered }] }
+//   color         - the class color, used for the card border and back
+//   onExit        - called when the user clicks "Back"
+//   onUpdateCards - called with the updated cards array whenever a card is marked,
+//                   so App.jsx can save the new mastery status
+
 import { useState } from 'react';
 
 function FlashcardViewer({ set, color, onExit, onUpdateCards }) {
-  const [index, setIndex] = useState(0);
-  const [flipped, setFlipped] = useState(false);
+  const [index, setIndex] = useState(0);        // which card is showing
+  const [flipped, setFlipped] = useState(false); // false = front, true = back
 
   const card = set.cards[index];
   const isLast = index === set.cards.length - 1;
   const masteredCount = set.cards.filter(c => c.mastered).length;
 
+  // Move to the next/previous card, always showing its front first.
   function goNext() {
     if (isLast) return;
     setFlipped(false);
@@ -20,6 +33,8 @@ function FlashcardViewer({ set, color, onExit, onUpdateCards }) {
     setIndex(i => i - 1);
   }
 
+  // Save whether the current card is mastered (true) or still being learned (false),
+  // then move on to the next card automatically.
   function markCard(mastered) {
     const updatedCards = set.cards.map((c, i) =>
       i === index ? { ...c, mastered } : c
@@ -32,6 +47,7 @@ function FlashcardViewer({ set, color, onExit, onUpdateCards }) {
     }
   }
 
+  // Empty set: show a message instead of a card.
   if (!card) {
     return (
       <div className="study-screen">

@@ -1,5 +1,19 @@
+// QuizView.jsx
+//
+// Quiz mode: turns a study set into multiple-choice questions. Each card's
+// front becomes the question, its back is the correct answer, and up to three
+// other cards' backs are used as wrong answers. Tracks the score and shows
+// results at the end, with an option to retake.
+//
+// Props:
+//   set    - the study set: { title, cards: [{ id, front, back }] }
+//   color  - the class color, used for the question card border
+//   onExit - called when the user clicks "Back"
+
 import { useMemo, useState } from 'react';
 
+// Returns a shuffled copy of an array (Fisher–Yates shuffle).
+// The original array is not changed.
 function shuffle(arr) {
   const a = [...arr];
   for (let i = a.length - 1; i > 0; i--) {
@@ -9,6 +23,10 @@ function shuffle(arr) {
   return a;
 }
 
+// Builds one question per card.
+// Input:  cards - [{ id, front, back }]
+// Output: [{ id, prompt, correct, options }] where options holds the correct
+//         answer plus up to 3 wrong answers, in random order.
 function buildQuestions(cards) {
   return cards.map(card => {
     const decoys = shuffle(cards.filter(c => c.id !== card.id))
@@ -20,12 +38,14 @@ function buildQuestions(cards) {
 }
 
 function QuizView({ set, color, onExit }) {
+  // useMemo keeps the shuffled questions the same while the quiz is running.
   const questions = useMemo(() => buildQuestions(set.cards), [set.cards]);
-  const [index, setIndex] = useState(0);
-  const [selected, setSelected] = useState(null);
-  const [score, setScore] = useState(0);
-  const [finished, setFinished] = useState(false);
+  const [index, setIndex] = useState(0);            // current question
+  const [selected, setSelected] = useState(null);   // answer the user picked, or null
+  const [score, setScore] = useState(0);            // number of correct answers
+  const [finished, setFinished] = useState(false);  // true once the last question is done
 
+  // A quiz needs at least 2 cards so there's at least one wrong answer to choose from.
   if (questions.length < 2) {
     return (
       <div className="study-screen">
@@ -40,6 +60,7 @@ function QuizView({ set, color, onExit }) {
   const question = questions[index];
   const isLast = index === questions.length - 1;
 
+  // Lock in the user's answer (only the first click counts) and update the score.
   function handleSelect(option) {
     if (selected) return;
     setSelected(option);
@@ -55,6 +76,7 @@ function QuizView({ set, color, onExit }) {
     setIndex(i => i + 1);
   }
 
+  // Results screen.
   if (finished) {
     return (
       <div className="study-screen">

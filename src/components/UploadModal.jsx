@@ -1,17 +1,32 @@
+// UploadModal.jsx
+//
+// Pop-up window for creating a new study set. The user gives the set a title
+// and either pastes notes or uploads a .txt / .md file. Clicking "Generate
+// Flashcards" sends the title and text back to App.jsx, which turns the notes
+// into cards with generateCards().
+//
+// Props:
+//   color        - the class color, used for the modal header
+//   onClose      - called when the user cancels or clicks outside the modal
+//   onGenerate   - called with { title, text } when the form is valid
+//   isGenerating - true while cards are being created; disables the buttons
+
 import { useState, useRef } from 'react';
 
 function UploadModal({ color, onClose, onGenerate, isGenerating }) {
   const [title, setTitle] = useState('');
   const [text, setText] = useState('');
   const [error, setError] = useState('');
-  const fileInputRef = useRef(null);
+  const fileInputRef = useRef(null); // hidden file input, opened by the upload button
 
+  // Reads an uploaded .txt or .md file into the notes box.
+  // If no title has been typed yet, the file name becomes the title.
   function handleFileChange(e) {
     const file = e.target.files?.[0];
     if (!file) return;
 
     if (!file.name.toLowerCase().endsWith('.txt') && !file.name.toLowerCase().endsWith('.md')) {
-      setError('Right now only .txt and .md files can be read directly — paste PDF text below instead, or ask Claude to add PDF support.');
+      setError('Right now only .txt and .md files can be uploaded. For a PDF, copy its text and paste it below.');
       return;
     }
 
@@ -25,6 +40,7 @@ function UploadModal({ color, onClose, onGenerate, isGenerating }) {
     }
   }
 
+  // Checks that both notes and a title were given, then passes them to App.jsx.
   function handleSubmit() {
     if (!text.trim()) {
       setError('Add some notes first — paste text or upload a .txt file.');

@@ -28,9 +28,23 @@ function isDark(hex) {
   return 0.299 * r + 0.587 * g + 0.114 * b < 140;
 }
 
+// Formats a set count for display, e.g. 1 -> "1 set", 3 -> "3 sets".
 const setCount = (n) => `${n} ${n === 1 ? 'set' : 'sets'}`;
 
+// App.jsx
+//
+// The main component and central hub of Studyo. It holds all app data
+// (subjects -> classes -> study sets -> cards) and decides which screen to show:
+//   1. Subjects grid (homepage)
+//   2. Classes in the selected subject
+//   3. Study sets in the selected class
+//   4. Flashcard or quiz mode for the selected set
+// The Pomodoro timer stays visible on every screen.
+//
+// Note: data lives in React state only, so it resets when the page is refreshed.
+
 function App() {
+  // All study data, starting with built-in subjects/classes and two sample biology sets.
   const [subjects, setSubjects] = useState([
     {
       id: 1,
@@ -88,6 +102,7 @@ function App() {
     }
   ]);
 
+  // Navigation state: which subject, class, set and study mode are open (null = none).
   const [selectedSubjectId, setSelectedSubjectId] = useState(null);
   const [selectedClassId, setSelectedClassId] = useState(null);
   const [activeSetId, setActiveSetId] = useState(null);
@@ -96,6 +111,7 @@ function App() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [podOpen, setPodOpen] = useState(false); // full-screen timer on phones
 
+  // Look up the full objects for the selected IDs.
   const selectedSubject = subjects.find(s => s.id === selectedSubjectId) || null;
   const selectedClass = selectedSubject
     ? selectedSubject.classes.find(c => c.id === selectedClassId) || null
@@ -104,6 +120,7 @@ function App() {
     ? selectedClass.sets.find(s => s.id === activeSetId) || null
     : null;
 
+  // Back-navigation helpers: each one clears the selections below its level.
   function goToSubjects() {
     setSelectedSubjectId(null);
     setSelectedClassId(null);
@@ -122,6 +139,8 @@ function App() {
     setActiveMode(null);
   }
 
+  // Replaces the study sets of the currently selected class.
+  // Copies objects instead of changing them, so React notices the update.
   function updateClassSets(newSets) {
     setSubjects(prev =>
       prev.map(subject =>
@@ -137,6 +156,7 @@ function App() {
     );
   }
 
+  // Called by UploadModal: turns the notes into cards and adds a new set to the class.
   function handleGenerate({ title, text }) {
     setIsGenerating(true);
     // Mock generation happens instantly; a real API call would be awaited here.
@@ -155,6 +175,7 @@ function App() {
     setShowUploadModal(false);
   }
 
+  // Called by FlashcardViewer when a card is marked mastered/still learning.
   function handleUpdateCards(updatedCards) {
     if (!activeSet) return;
     const newSets = selectedClass.sets.map(s =>
@@ -163,6 +184,7 @@ function App() {
     updateClassSets(newSets);
   }
 
+  // Color used for headers and cards: the class color, then subject color, then default blue.
   const accentColor = selectedClass?.color || selectedSubject?.color || '#5BC0EB';
 
   return (

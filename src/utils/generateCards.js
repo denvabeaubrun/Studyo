@@ -78,24 +78,32 @@ export function generateCards(text, maxCards = 100) {
   // Only used when pass 1 found few cards, so mixed notes don't get mispaired.
   if (pairs.length < Math.max(3, lines.length / 4)) {
     const alt = [];
+    const altUsed = new Set();
     for (let i = 0; i + 1 < lines.length; i++) {
       const a = lines[i];
       const b = lines[i + 1];
       if (looksLikeTerm(a) && !/[.!?]$/.test(a) && b.length > a.length && !splitLine(b)) {
         alt.push([a, b]);
+        altUsed.add(i);
+        altUsed.add(i + 1);
         i++;
       }
     }
     if (alt.length > pairs.length) {
       pairs.length = 0;
       pairs.push(...alt);
+      used.clear();
+      altUsed.forEach((i) => used.add(i));
     }
   }
 
   // Pass 3: fill-in-the-blank cards from long sentences, only if still thin.
+  // Only lines that didn't already become cards are used, and each line is
+  // split on its own, so separate lines never get merged into one "sentence".
   if (pairs.length < 5) {
-    const sentences = text
-      .split(/(?<=[.?!])\s+/)
+    const sentences = lines
+      .filter((_, i) => !used.has(i))
+      .flatMap((line) => line.split(/(?<=[.?!])\s+/))
       .map((s) => clean(s))
       .filter((s) => s.length > 25 && s.length < 240);
     for (const sentence of sentences) {

@@ -1,0 +1,117 @@
+/* Top bar: flat, same blue as the page, so it blends in. */
+.header {
+  background: rgba(234, 246, 252, 0.82);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.2s;
+}
+.header.is-scrolled {
+  border-bottom-color: rgba(26, 26, 26, 0.12);
+}
+
+.snav {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  width: 100%;
+  max-width: 1040px;
+  margin: 0 auto;
+}
+.snav-brand {
+  font: inherit;
+}
+.snav-logo {
+  font: inherit;
+  font-size: 22px;
+  font-weight: 800;
+  color: #1a1a1a;
+  white-space: nowrap;
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+.snav-links {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  margin-left: auto;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.snav-links::-webkit-scrollbar {
+  display: none;
+}
+.snav-link,
+.snav-timer {
+  padding: 8px 12px;
+  font: inherit;
+  font-size: 15px;
+  font-weight: 700;
+  color: #555;
+  white-space: nowrap;
+  background: none;
+  border: 0;
+  cursor: pointer;
+  transition: color 0.15s, text-decoration-color 0.15s;
+}
+.snav-link {
+  text-decoration: underline 3px transparent;
+  text-underline-offset: 7px;
+}
+.snav-link:hover,
+.snav-timer:hover {
+  color: #1a1a1a;
+}
+.snav-link.is-active {
+  color: #1a1a1a;
+  text-decoration-color: #d62828;
+}
+.snav-timer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.snav-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #7dd3a0;
+}
+.snav button:focus-visible {
+  outline: 3px solid #d62828;
+  outline-offset: 2px;
+}
+
+/* Keeps jumped-to sections clear of the sticky bar. */
+#subjects,
+#how-it-works,
+#progress,
+#meet-the-pod {
+  scroll-margin-top: 96px;
+}
+
+@media (max-width: 700px) {
+  .header {
+    padding: 8px 14px;
+  }
+  .snav {
+    gap: 8px;
+  }
+  .snav-logo {
+    font-size: 17px;
+  }
+  .snav-link,
+  .snav-timer {
+    padding: 8px;
+    font-size: 13px;
+  }
+}
+@media (max-width: 520px) {
+  .snav-brand {
+    display: none;
+  }
+  .snav-links {
+    margin-left: 0;
+  }
+}

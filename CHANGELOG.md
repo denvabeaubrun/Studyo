@@ -2,6 +2,17 @@
 
 All notable changes to Studyo are listed here, newest first.
 
+## [Unreleased]
+
+### Added
+- Top navigation bar (`SiteNav`) with links to Home, Subjects, How it works, and Progress, plus a Timer link. The current section is underlined, and the links work from inside a class or study screen too.
+- Homepage sections under the subjects grid (`HomeSections`): How it works, Your progress, Meet the pod, and a slim footer.
+- Progress tracker showing cards mastered overall and per subject, based on your actual sets.
+- One-line tip under "My subjects".
+
+### Changed
+- The header is now a flat bar that blends into the page, replacing the plain logo header.
+
 ## [0.1.0] - 2026-10-26
 
 ### Added

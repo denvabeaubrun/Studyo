@@ -9,6 +9,7 @@ body {
   background: #EAF6FC;   /* was #FFFFFF */
   color: #1a1a1a;
   min-height: 100vh;
+  overflow-x: clip;   /* full-width bands use 100vw, which includes the scrollbar */
 }
 
 .app {
@@ -19,18 +20,12 @@ body {
 .header {
   display: flex;
   align-items: center;
-  padding: 16px 24px;
+  padding: 10px 24px;
   position: sticky;
   top: 0;
-  background: #EAF6FC;
   z-index: 10;
   margin: -24px -24px 0;
-}
-
-.logo {
-  font-size: 28px;
-  font-weight: 800;
-  color: #1a1a1a;
+  /* Background, blur and the nav itself are styled in components/SiteNav.css */
 }
 
 .main {

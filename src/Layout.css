@@ -25,6 +25,13 @@
   grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
 }
 
+/* One-line tip under "My subjects" */
+.subjects-hint {
+  margin: -4px 0 18px;
+  font-size: 16px;
+  color: #555;
+}
+
 /* Deck counts and readable text on dark cards */
 .subject-meta {
   margin: 4px 0 0;

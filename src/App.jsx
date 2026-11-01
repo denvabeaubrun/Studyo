@@ -5,6 +5,8 @@ import Pomodoro from './components/Pomodoro';
 import UploadModal from './components/UploadModal';
 import FlashcardViewer from './components/FlashcardViewer';
 import QuizView from './components/QuizView';
+import SiteNav from './components/SiteNav';
+import HomeSections from './components/HomeSections';
 import { generateCards } from './utils/generateCards';
 import './Layout.css';
 
@@ -40,6 +42,8 @@ const setCount = (n) => `${n} ${n === 1 ? 'set' : 'sets'}`;
 //   3. Study sets in the selected class
 //   4. Flashcard or quiz mode for the selected set
 // The Pomodoro timer stays visible on every screen.
+// On the subjects screen the page continues below the grid with HomeSections
+// (how it works, progress, the pod). SiteNav is the top bar.
 //
 // Note: data lives in React state only, so it resets when the page is refreshed.
 
@@ -139,6 +143,26 @@ function App() {
     setActiveMode(null);
   }
 
+  // Top bar and footer links: jump to a section of the homepage.
+  // If a class or study screen is open, go back to the subjects first.
+  function goToSection(id) {
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const behavior = reduceMotion ? 'auto' : 'smooth';
+    const scroll = () => {
+      if (id === 'top') {
+        window.scrollTo({ top: 0, behavior });
+      } else {
+        document.getElementById(id)?.scrollIntoView({ behavior, block: 'start' });
+      }
+    };
+    if (selectedSubjectId !== null) {
+      goToSubjects();
+      setTimeout(scroll, 50); // wait for the homepage to render
+    } else {
+      scroll();
+    }
+  }
+
   // Replaces the study sets of the currently selected class.
   // Copies objects instead of changing them, so React notices the update.
   function updateClassSets(newSets) {
@@ -189,9 +213,7 @@ function App() {
 
   return (
     <div className="app">
-      <header className="header">
-        <h1 className="logo">📚 Studyo</h1>
-      </header>
+      <SiteNav onNavigate={goToSection} />
       <main className={`main main--wide${selectedSubject === null ? ' has-stars' : ''}`}>
         {/* Dome of twinkling stars over the headline, on the homepage only */}
         {selectedSubject === null && <Stars />}
@@ -211,12 +233,13 @@ function App() {
         <p className="subtitle">Create flashcards, mock quizzes and more</p>
 
         <div className="home-layout">
-          <section className="subjects-section">
+          <section className="subjects-section" id="subjects">
             {selectedSubject === null ? (
               <>
                 <div className="subjects-header">
                   <h3 className="subjects-title">My subjects</h3>
                 </div>
+                <p className="subjects-hint">Pick a subject, add your notes, and start studying.</p>
                 <div className="subjects-grid">
                   {subjects.map(subject => {
                     const sets = subject.classes.reduce((n, c) => n + c.sets.length, 0);
@@ -361,6 +384,11 @@ function App() {
             <Pomodoro open={podOpen} onOpenChange={setPodOpen} />
           </aside>
         </div>
+
+        {/* Explanation, progress and pod info; the homepage only */}
+        {selectedSubject === null && (
+          <HomeSections subjects={subjects} onNavigate={goToSection} />
+        )}
       </main>
 
       <Critters />

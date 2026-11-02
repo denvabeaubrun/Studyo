@@ -10,7 +10,7 @@
   Organize study sets by subject and class, each with its own color and emoji.
 
 * 📝 **Study Notes Upload**
-  Paste notes or upload `.txt` / `.md` files.
+  Paste notes or upload `.txt`, `.md` or `.pdf` files.
 
 * 🧠 **Automatic Flashcards**
   Turns notes into flashcards by detecting formats like `Term: definition`, `Term - definition`, and term/definition line pairs. Falls back to fill-in-the-blank cards from longer sentences.
@@ -92,7 +92,7 @@ Acts as the central hub of the application and manages the flow between subjects
 Processes study notes and generates flashcards using text-pattern rules. It recognizes common note formats (colons, dashes, arrows, equals signs, tabs, and term/definition line pairs) and removes duplicate terms.
 
 **`components/UploadModal.jsx`**
-Provides the interface for adding study material through pasted notes or uploaded `.txt`/`.md` files.
+Provides the interface for adding study material through pasted notes or uploaded `.txt`/`.md`/`.pdf` files. PDF text is read in the browser (`src/utils/readPdf.js`) and shown in the notes box so it can be edited before cards are made.
 
 **`components/FlashcardViewer.jsx`**
 Displays study cards one at a time and allows students to mark cards as either "Got it" or "Still learning."
@@ -160,18 +160,18 @@ Every push to `main` automatically builds the app and deploys it to GitHub Pages
 
 Studyo is an ongoing project developed for **CISC 4900**.
 
-**Working now:** subject/class organization, notes upload (`.txt`/`.md` or pasted text), automatic flashcard generation, flashcard study mode with mastery tracking, quiz mode, Pomodoro timer, and GitHub Pages deployment.
+**Working now:** subject/class organization, notes upload (`.txt`/`.md`/`.pdf` or pasted text), messy-notes cleanup, automatic flashcard generation, flashcard study mode with mastery tracking, quiz mode, Pomodoro timer, and GitHub Pages deployment.
 
 **Known limitations:**
 
 * Flashcards are generated with text-pattern rules, not AI yet.
-* PDF files can't be uploaded directly; paste the text instead.
+* PDF upload only works for PDFs that contain real text. Scanned PDFs (pictures of pages) and password-protected PDFs can't be read, and only the first 150 pages of a PDF are used. PDFs with two columns can come out in a jumbled order, so check the text before generating.
 * Data isn't saved yet: refreshing the page resets subjects, sets, and progress.
 
 ## Future Development
 
 * AI-powered flashcard and quiz generation (Claude API via a secure server-side proxy)
-* Direct PDF upload
+* Reading scanned PDFs and images (OCR)
 * Saving data between sessions (localStorage or a database)
 * Quiz score history over time
 * Game-based study modes

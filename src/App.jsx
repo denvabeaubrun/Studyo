@@ -321,7 +321,7 @@ function App() {
                   </button>
                 </div>
                 <p className="upload-hint">
-                  Upload a .txt/.md file or paste notes and Studyo will generate flashcards and quiz questions.
+                  Upload a .txt, .md or .pdf file, or paste notes and Studyo will generate flashcards and quiz questions.
                 </p>
 
                 <div className="sets-header">

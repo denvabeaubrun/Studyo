@@ -5,12 +5,17 @@ All notable changes to Studyo are listed here, newest first.
 ## [Unreleased]
 
 ### Added
+- PDF upload. The text is read in the browser and shown in the notes box so it can be checked and edited before cards are made. Handles up to 20 MB and 150 pages; scanned or password-protected PDFs get a clear message.
+- Messy-notes cleanup (`cleanNotes`): rejoins words split by a hyphen at the end of a line, rejoins sentences broken across lines, removes page numbers and headers/footers that repeat on every PDF page, and fixes ligatures and odd spaces.
+- New card formats: `Q:` / `A:` pairs, a question line followed by its answer, and "X is/are ..." sentences.
+- Tests for the new behavior (`generateCards.test.js`, `readPdf.test.js`).
 - Top navigation bar (`SiteNav`) with links to Home, Subjects, How it works, and Progress, plus a Timer link. The current section is underlined, and the links work from inside a class or study screen too.
 - Homepage sections under the subjects grid (`HomeSections`): How it works, Your progress, Meet the pod, and a slim footer.
 - Progress tracker showing cards mastered overall and per subject, based on your actual sets.
 - One-line tip under "My subjects".
 
 ### Changed
+- The deploy workflow uses Node 22 (required by the PDF library, `pdfjs-dist`).
 - The header is now a flat bar that blends into the page, replacing the plain logo header.
 
 ## [0.1.0] - 2026-10-26

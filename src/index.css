@@ -447,6 +447,12 @@ body {
   margin-top: 12px;
 }
 
+.modal-note {
+  color: #2f6b4a;
+  font-size: 13px;
+  margin-top: 12px;
+}
+
 .modal-footer {
   display: flex;
   justify-content: flex-end;

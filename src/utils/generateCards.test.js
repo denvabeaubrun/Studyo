@@ -9,7 +9,7 @@
 // Run with: npm test
 
 import { describe, it, expect } from 'vitest';
-import { generateCards } from './generateCards';
+import { generateCards, cleanNotes } from './generateCards';
 
 // Helper: keep only the front/back text so tests can compare cards easily.
 const pairs = (cards) => cards.map(({ front, back }) => [front, back]);
@@ -148,5 +148,111 @@ describe('generateCards', () => {
   it('returns no cards for empty notes', () => {
     // Input: nothing but blank lines and spaces.
     expect(generateCards('   \n\n  ')).toEqual([]);
+  });
+
+  // ---------------------------------------------------------------------
+  // Messy notes
+  // ---------------------------------------------------------------------
+
+  it('turns "Q:" / "A:" pairs and plain question lines into cards', () => {
+    const notes = [
+      'Q: What organelle makes ATP?',
+      'A: The mitochondria',
+      'Question 2. Where does photosynthesis happen?',
+      'Answer 2. In the chloroplasts',
+      'Why is the sky blue?',
+      'Short wavelengths scatter more in the atmosphere',
+    ].join('\n');
+
+    expect(pairs(generateCards(notes))).toEqual([
+      ['What organelle makes ATP?', 'The mitochondria'],
+      ['Where does photosynthesis happen?', 'In the chloroplasts'],
+      ['Why is the sky blue?', 'Short wavelengths scatter more in the atmosphere'],
+    ]);
+  });
+
+  it('turns "X is/are ..." sentences into term cards', () => {
+    const notes =
+      'Mitochondria are the organelles that make most of the cell\u2019s ATP. ' +
+      'The cell membrane is a thin layer that controls what enters and exits the cell.';
+
+    expect(pairs(generateCards(notes))).toEqual([
+      ['Mitochondria', 'The organelles that make most of the cell\u2019s ATP.'],
+      ['Cell membrane', 'A thin layer that controls what enters and exits the cell.'],
+    ]);
+  });
+
+  it('does not make a card from a sentence that starts with a pronoun', () => {
+    const notes = 'It is important to review your notes within a day of class.';
+    const fronts = generateCards(notes).map((card) => card.front);
+    expect(fronts).not.toContain('It');
+  });
+
+  it('keeps Q/A and term lines in the order they were written', () => {
+    const notes = [
+      'Atom: The smallest unit of matter',
+      'Q: What is a molecule?',
+      'A: Two or more atoms bonded together',
+      'Ion: An atom with an electric charge',
+    ].join('\n');
+
+    expect(generateCards(notes).map((card) => card.front)).toEqual([
+      'Atom',
+      'What is a molecule?',
+      'Ion',
+    ]);
+  });
+});
+
+describe('cleanNotes', () => {
+  it('joins a word split by a hyphen at the end of a line', () => {
+    expect(cleanNotes('Photo-\nsynthesis: How plants make food')).toBe('Photosynthesis: How plants make food\n');
+  });
+
+  it('joins a long sentence that wrapped onto the next line', () => {
+    const notes =
+      'Osmosis: the net movement of water across a selectively permeable\nmembrane from low to high solute concentration';
+    expect(cleanNotes(notes)).toContain(
+      'Osmosis: the net movement of water across a selectively permeable membrane from low to high solute concentration'
+    );
+  });
+
+  it('does not join a short term line with a lowercase definition line', () => {
+    const notes = 'Mitochondria\nthe powerhouse of the cell';
+    expect(cleanNotes(notes)).toContain('Mitochondria\nthe powerhouse of the cell');
+  });
+
+  it('removes page numbers and headers/footers that repeat on every page', () => {
+    // Pages are separated by a form feed, the way readPdf.js sends them.
+    const page = (n, body) => `Biology 101 - Cell Notes\n${body}\nPage ${n}`;
+    const notes = [
+      page(1, 'Mitochondria: The powerhouse of the cell'),
+      page(2, 'Ribosome: Builds proteins from amino acids'),
+      page(3, 'Nucleus: Stores the cell DNA'),
+    ].join('\f');
+
+    const cleaned = cleanNotes(notes);
+    expect(cleaned).not.toContain('Biology 101');
+    expect(cleaned).not.toMatch(/Page \d/);
+    expect(pairs(generateCards(notes))).toEqual([
+      ['Mitochondria', 'The powerhouse of the cell'],
+      ['Ribosome', 'Builds proteins from amino acids'],
+      ['Nucleus', 'Stores the cell DNA'],
+    ]);
+  });
+
+  it('removes a bare page number only at the top or bottom of a PDF page', () => {
+    const notes = ['Allele: A version of a gene\n7', 'Genotype: The genetic makeup\n8'].join('\f');
+    expect(cleanNotes(notes)).not.toMatch(/^[78]$/m);
+    // A number alone on a line in the middle of normal notes is kept.
+    expect(cleanNotes('Speed of light\n299792458\nGravity: 9.8')).toContain('299792458');
+  });
+
+  it('fixes PDF ligatures, odd spaces and invisible characters', () => {
+    expect(cleanNotes('Of\uFB01ce:\u00A0a\u200B place')).toBe('Office: a place\n');
+  });
+
+  it('drops divider lines', () => {
+    expect(cleanNotes('Atom: tiny\n-----\nIon: charged')).not.toContain('-----');
   });
 });

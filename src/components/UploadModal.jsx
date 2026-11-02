@@ -1,7 +1,8 @@
 // UploadModal.jsx
 //
 // Pop-up window for creating a new study set. The user gives the set a title
-// and either pastes notes or uploads a .txt / .md file. Clicking "Generate
+// and either pastes notes or uploads a .txt / .md / .pdf file (PDF text is read
+// in the browser by readPdf.js). Clicking "Generate
 // Flashcards" sends the title and text back to App.jsx, which turns the notes
 // into cards with generateCards().
 //
@@ -12,38 +13,66 @@
 //   isGenerating - true while cards are being created; disables the buttons
 
 import { useState, useRef } from 'react';
+import { extractPdfText } from '../utils/readPdf';
 
 function UploadModal({ color, onClose, onGenerate, isGenerating }) {
   const [title, setTitle] = useState('');
   const [text, setText] = useState('');
   const [error, setError] = useState('');
+  const [note, setNote] = useState('');        // friendly info message, like "Read 12 pages"
+  const [isReading, setIsReading] = useState(false); // true while a PDF is being read
   const fileInputRef = useRef(null); // hidden file input, opened by the upload button
 
-  // Reads an uploaded .txt or .md file into the notes box.
+  // Reads an uploaded .txt, .md or .pdf file into the notes box so it can be
+  // checked and edited before cards are made.
   // If no title has been typed yet, the file name becomes the title.
-  function handleFileChange(e) {
+  async function handleFileChange(e) {
     const file = e.target.files?.[0];
+    e.target.value = ''; // lets the same file be picked again later
     if (!file) return;
 
-    if (!file.name.toLowerCase().endsWith('.txt') && !file.name.toLowerCase().endsWith('.md')) {
-      setError('Right now only .txt and .md files can be uploaded. For a PDF, copy its text and paste it below.');
+    const name = file.name.toLowerCase();
+    const isPdf = name.endsWith('.pdf');
+    if (!isPdf && !name.endsWith('.txt') && !name.endsWith('.md')) {
+      setError('Only .txt, .md and .pdf files can be uploaded. For anything else, copy the text and paste it below.');
+      setNote('');
       return;
     }
 
     setError('');
-    const reader = new FileReader();
-    reader.onload = () => setText(reader.result);
-    reader.readAsText(file);
+    setNote('');
+
+    if (isPdf) {
+      setIsReading(true);
+      try {
+        const { text: pdfText, truncated, pageCount } = await extractPdfText(file);
+        setText(pdfText);
+        setNote(
+          truncated
+            ? `Read the first part of a ${pageCount}-page PDF. Check the text below, then generate.`
+            : 'PDF read. Check the text below and edit anything that looks off, then generate.'
+        );
+      } catch (err) {
+        setError(err.message);
+        return;
+      } finally {
+        setIsReading(false);
+      }
+    } else {
+      const reader = new FileReader();
+      reader.onload = () => setText(reader.result);
+      reader.readAsText(file);
+    }
 
     if (!title) {
-      setTitle(file.name.replace(/\.(txt|md)$/i, ''));
+      setTitle(file.name.replace(/\.(txt|md|pdf)$/i, ''));
     }
   }
 
   // Checks that both notes and a title were given, then passes them to App.jsx.
   function handleSubmit() {
     if (!text.trim()) {
-      setError('Add some notes first — paste text or upload a .txt file.');
+      setError('Add some notes first — paste text or upload a .txt, .md or .pdf file.');
       return;
     }
     if (!title.trim()) {
@@ -77,7 +106,7 @@ function UploadModal({ color, onClose, onGenerate, isGenerating }) {
           <textarea
             id="notes-text"
             className="modal-textarea"
-            placeholder={'Paste your notes here — works best as either:\n"Mitochondria: the powerhouse of the cell"\nor full sentences you want turned into study questions.'}
+            placeholder={'Paste your notes here. Studyo understands:\n"Mitochondria: the powerhouse of the cell"\n"Q: ... / A: ..." pairs, questions with answers below them,\nor full sentences you want turned into study questions.\nMessy notes are fine.'}
             value={text}
             onChange={e => setText(e.target.value)}
             rows={8}
@@ -87,18 +116,20 @@ function UploadModal({ color, onClose, onGenerate, isGenerating }) {
             className="modal-file-button"
             onClick={() => fileInputRef.current?.click()}
             type="button"
+            disabled={isReading}
           >
-            📄 Or upload a .txt / .md file
+            {isReading ? '📄 Reading PDF…' : '📄 Or upload a .txt, .md or .pdf file'}
           </button>
           <input
             ref={fileInputRef}
             type="file"
-            accept=".txt,.md"
+            accept=".txt,.md,.pdf,application/pdf"
             onChange={handleFileChange}
             style={{ display: 'none' }}
           />
 
-          {error && <p className="modal-error">{error}</p>}
+          {note && !error && <p className="modal-note" role="status">{note}</p>}
+          {error && <p className="modal-error" role="alert">{error}</p>}
         </div>
 
         <div className="modal-footer">
@@ -108,7 +139,7 @@ function UploadModal({ color, onClose, onGenerate, isGenerating }) {
           <button
             className="modal-generate-button"
             onClick={handleSubmit}
-            disabled={isGenerating}
+            disabled={isGenerating || isReading}
           >
             {isGenerating ? 'Generating…' : 'Generate Flashcards'}
           </button>

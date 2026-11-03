@@ -5,6 +5,8 @@ All notable changes to Studyo are listed here, newest first.
 ## [Unreleased]
 
 ### Added
+- Saved progress. Subjects, sets, and mastered cards are saved in the browser (local storage) and are still there after a refresh. Saved data is checked on load and falls back to the sample data if it is damaged. If saving fails (storage full or blocked), a warning is shown. A "Reset saved data" button in the footer clears it.
+- 14 new tests for saving and loading (`storage.test.js`).
 - README Requirements section: user needs, a requirements table (need, feature, input and output, how it is checked), measurable targets, use cases including a bad-input case, and assumptions.
 - PDF upload. The text is read in the browser and shown in the notes box so it can be checked and edited before cards are made. Handles up to 20 MB and 150 pages; scanned or password-protected PDFs get a clear message.
 - Messy-notes cleanup (`cleanNotes`): rejoins words split by a hyphen at the end of a line, rejoins sentences broken across lines, removes page numbers and headers/footers that repeat on every PDF page, and fixes ligatures and odd spaces.
@@ -16,6 +18,7 @@ All notable changes to Studyo are listed here, newest first.
 - One-line tip under "My subjects".
 
 ### Changed
+- The starting data moved from `App.jsx` into `data/defaultSubjects.js`.
 - The deploy workflow uses Node 22 (required by the PDF library, `pdfjs-dist`).
 - The header is now a flat bar that blends into the page, replacing the plain logo header.
 

@@ -9,6 +9,7 @@
 // Props:
 //   subjects          - the subjects array from App.jsx (subjects -> classes -> sets -> cards)
 //   onNavigate(id)    - scrolls to a section; same function the top bar uses
+//   onReset()         - the footer's "Reset saved data" button
 
 import { useEffect, useRef } from 'react';
 import './HomeSections.css';
@@ -89,7 +90,7 @@ function getProgress(subjects) {
 
 const percent = (done, total) => Math.round((done / total) * 100);
 
-function HomeSections({ subjects, onNavigate }) {
+function HomeSections({ subjects, onNavigate, onReset }) {
   const ref = useReveal();
   const rows = getProgress(subjects);
   const totalDone = rows.reduce((sum, row) => sum + row.done, 0);
@@ -180,6 +181,7 @@ function HomeSections({ subjects, onNavigate }) {
           <button type="button" onClick={() => onNavigate('how-it-works')}>How it works</button>
           <button type="button" onClick={() => onNavigate('progress')}>Progress</button>
           <button type="button" onClick={() => onNavigate('meet-the-pod')}>The pod</button>
+          <button type="button" onClick={onReset}>Reset saved data</button>
         </nav>
       </footer>
     </div>

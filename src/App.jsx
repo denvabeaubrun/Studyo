@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import usePersistentSubjects from './hooks/usePersistentSubjects';
 import Critters from './components/Critters';
 import Stars from './components/Stars';
 import Pomodoro from './components/Pomodoro';
@@ -9,19 +10,6 @@ import SiteNav from './components/SiteNav';
 import HomeSections from './components/HomeSections';
 import { generateCards } from './utils/generateCards';
 import './Layout.css';
-
-const sampleBiologyCards1 = [
-  { id: 1001, front: 'Mitochondria', back: 'The powerhouse of the cell', mastered: true },
-  { id: 1002, front: 'Cell membrane', back: 'Controls what enters and exits the cell', mastered: true },
-  { id: 1003, front: 'Nucleus', back: 'Stores the cell\u2019s DNA and controls activity', mastered: false },
-  { id: 1004, front: 'Ribosome', back: 'Builds proteins from amino acids', mastered: false },
-];
-
-const sampleBiologyCards2 = [
-  { id: 2001, front: 'Allele', back: 'A version of a gene', mastered: true },
-  { id: 2002, front: 'Genotype', back: 'The genetic makeup of an organism', mastered: false },
-  { id: 2003, front: 'Phenotype', back: 'The observable traits of an organism', mastered: false },
-];
 
 // True for dark card colors, so their text can switch to white.
 function isDark(hex) {
@@ -45,66 +33,13 @@ const setCount = (n) => `${n} ${n === 1 ? 'set' : 'sets'}`;
 // On the subjects screen the page continues below the grid with HomeSections
 // (how it works, progress, the pod). SiteNav is the top bar.
 //
-// Note: data lives in React state only, so it resets when the page is refreshed.
+// Data is saved in this browser's local storage, so it survives a refresh. It stays
+// on this device and browser; there are no accounts or syncing yet.
 
 function App() {
-  // All study data, starting with built-in subjects/classes and two sample biology sets.
-  const [subjects, setSubjects] = useState([
-    {
-      id: 1,
-      name: 'Science',
-      emoji: '🧬',
-      color: '#7DD3A0',
-      classes: [
-        {
-          id: 11, name: 'Biology', emoji: '🧬',
-          sets: [
-            { id: 111, title: 'Cell Bio Ch. 3', createdAt: '2026-09-10', cards: sampleBiologyCards1 },
-            { id: 112, title: 'Genetics Ch. 5', createdAt: '2026-09-18', cards: sampleBiologyCards2 }
-          ]
-        },
-        { id: 12, name: 'Chemistry', emoji: '🧪', color: '#5BC0EB', sets: [] },
-        { id: 13, name: 'Physics', emoji: '⚛️', color: '#A78BFA', sets: [] },
-        { id: 14, name: 'Astronomy', emoji: '🔭', color: '#475569', sets: [] }
-      ]
-    },
-    {
-      id: 2, name: 'Math', emoji: '🔢', color: '#5BC0EB',
-      classes: [
-        { id: 21, name: 'Geometry', emoji: '📐', sets: [] },
-        { id: 22, name: 'Algebra', emoji: '🔢', sets: [] },
-        { id: 23, name: 'Statistics', emoji: '📊', sets: [] },
-        { id: 24, name: 'Calculus', emoji: '📈', sets: [] }
-      ]
-    },
-    {
-      id: 3, name: 'Social Studies', emoji: '📜', color: '#FBBF24',
-      classes: [
-        { id: 31, name: 'History', emoji: '🏛️', sets: [] },
-        { id: 32, name: 'Geography', emoji: '🌍', sets: [] },
-        { id: 33, name: 'Economics', emoji: '💰', sets: [] },
-        { id: 34, name: 'Government', emoji: '🗳️', sets: [] }
-      ]
-    },
-    {
-      id: 4, name: 'English', emoji: '📖', color: '#bf2222',
-      classes: [
-        { id: 41, name: 'Literature', emoji: '📚', sets: [] },
-        { id: 42, name: 'Writing', emoji: '✏️', sets: [] },
-        { id: 43, name: 'Grammar', emoji: '🔤', sets: [] },
-        { id: 44, name: 'Vocabulary', emoji: '📖', sets: [] }
-      ]
-    },
-    {
-      id: 5, name: 'Languages', emoji: '🌍', color: '#842570',
-      classes: [
-        { id: 51, name: 'Spanish', emoji: '🇪🇸', sets: [] },
-        { id: 52, name: 'French', emoji: '🇫🇷', sets: [] },
-        { id: 53, name: 'Mandarin', emoji: '🇨🇳', sets: [] },
-        { id: 54, name: 'Japanese', emoji: '🇯🇵', sets: [] }
-      ]
-    }
-  ]);
+  // All study data. It is saved in this browser (see usePersistentSubjects) and starts
+  // from the built-in subjects/classes and two sample biology sets (data/defaultSubjects.js).
+  const [subjects, setSubjects, { saveFailed, resetSubjects }] = usePersistentSubjects();
 
   // Navigation state: which subject, class, set and study mode are open (null = none).
   const [selectedSubjectId, setSelectedSubjectId] = useState(null);
@@ -208,6 +143,14 @@ function App() {
     updateClassSets(newSets);
   }
 
+  // "Reset saved data" in the footer: delete the saved copy and start over from the samples.
+  function handleResetData() {
+    if (!window.confirm('Reset everything back to the sample data? Your subjects, sets and progress on this device will be erased.')) return;
+    resetSubjects();
+    goToSubjects();
+    window.scrollTo({ top: 0 });
+  }
+
   // Color used for headers and cards: the class color, then subject color, then default blue.
   const accentColor = selectedClass?.color || selectedSubject?.color || '#5BC0EB';
 
@@ -215,6 +158,11 @@ function App() {
     <div className="app">
       <SiteNav onNavigate={goToSection} />
       <main className={`main main--wide${selectedSubject === null ? ' has-stars' : ''}`}>
+        {saveFailed && (
+          <p className="save-warning" role="alert">
+            Couldn&rsquo;t save to this browser (storage is full or blocked), so your changes will be lost if you refresh.
+          </p>
+        )}
         {/* Dome of twinkling stars over the headline, on the homepage only */}
         {selectedSubject === null && <Stars />}
         <h2 className="title">
@@ -387,7 +335,7 @@ function App() {
 
         {/* Explanation, progress and pod info; the homepage only */}
         {selectedSubject === null && (
-          <HomeSections subjects={subjects} onNavigate={goToSection} />
+          <HomeSections subjects={subjects} onNavigate={goToSection} onReset={handleResetData} />
         )}
       </main>
 

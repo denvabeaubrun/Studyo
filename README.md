@@ -69,7 +69,8 @@ Studyo is for students who keep notes in messy formats (typed notes, copied text
 | R7 | Test myself | Quiz mode | A set -> multiple-choice quiz | Manual |
 | R8 | Stay focused | Pomodoro timer (always visible) | Start/pause -> 25-minute focus sessions with breaks and music | Manual |
 | R9 | See what I've mastered | Progress tracker | Marked cards -> overall and per-subject mastery % | Manual |
-| R10 | Use it without installing anything | GitHub Pages deploy | Merge to `main` -> live site updates | GitHub Actions run is green |
+| R10 | Keep my work between visits | Saving in the browser (`storage.js`) | Any change -> still there after a refresh; "Reset saved data" returns to the samples | Automated tests + manual |
+| R11 | Use it without installing anything | GitHub Pages deploy | Merge to `main` -> live site updates | GitHub Actions run is green |
 
 ### Measurable targets
 
@@ -77,7 +78,8 @@ Studyo is for students who keep notes in messy formats (typed notes, copied text
 * **M2.** The 3-page messy test PDF produces 8 cards, with no cards made from the repeated header or page numbers.
 * **M3.** An upload that is over 20 MB, password protected, damaged, or has no text creates 0 cards and shows a message.
 * **M4.** Mastery % always equals cards marked "Got it" divided by total cards, shown overall and per subject.
-* **M5.** All automated tests (26 now) pass and the build succeeds before a pull request is merged.
+* **M5.** After a refresh, subjects, sets, and mastered cards are exactly as they were. Saved data that is damaged or out of date never crashes the app; it falls back to the sample data. Checked by automated tests and in a browser.
+* **M6.** All automated tests (40 now) pass and the build succeeds before a pull request is merged.
 
 ### Use cases
 
@@ -89,7 +91,7 @@ Studyo is for students who keep notes in messy formats (typed notes, copied text
 ### Assumptions and constraints
 
 * Notes are mostly text. Scanned pages and images aren't supported yet.
-* Everything runs in the browser. There are no accounts and no saving between visits yet.
+* Everything runs in the browser. Data is saved in this browser on this device only (local storage), with no accounts. It doesn't sync between devices, and clearing the site's data or using a private window starts fresh.
 * An API key can't be kept safely in browser code, so AI generation needs a small server-side proxy first.
 
 ## Technology
@@ -124,8 +126,14 @@ src/
 │   ├── Pomodoro.jsx          # Study timer + music player
 │   ├── Stars.jsx             # Decorative star field (homepage)
 │   └── Critters.jsx          # Decorative animated characters
+├── data/
+│   └── defaultSubjects.js    # Starting subjects, classes, and sample sets
+├── hooks/
+│   └── usePersistentSubjects.js  # Loads and saves data in the browser
 ├── utils/
-│   └── generateCards.js      # Notes → flashcards logic
+│   ├── generateCards.js      # Notes → flashcards logic
+│   ├── readPdf.js            # PDF text extraction
+│   └── storage.js            # Saves/loads data in local storage
 ├── App.jsx                   # Main app: subjects, classes, sets, navigation
 ├── Layout.css
 └── index.css
@@ -138,6 +146,9 @@ Acts as the central hub of the application and manages the flow between subjects
 
 **`utils/generateCards.js`**
 Processes study notes and generates flashcards using text-pattern rules. It recognizes common note formats (colons, dashes, arrows, equals signs, tabs, and term/definition line pairs) and removes duplicate terms.
+
+**`utils/storage.js` and `hooks/usePersistentSubjects.js`**
+Save all subjects, sets, and mastered cards in the browser's local storage after every change, and load them on startup. Saved data is checked first; if it is missing, damaged, or from a different version, the app falls back to the sample data in `data/defaultSubjects.js`. A "Reset saved data" button in the footer clears it.
 
 **`components/UploadModal.jsx`**
 Provides the interface for adding study material through pasted notes or uploaded `.txt`/`.md`/`.pdf` files. PDF text is read in the browser (`src/utils/readPdf.js`) and shown in the notes box so it can be edited before cards are made.
@@ -208,19 +219,19 @@ Every push to `main` automatically builds the app and deploys it to GitHub Pages
 
 Studyo is an ongoing project developed for **CISC 4900**.
 
-**Working now:** subject/class organization, notes upload (`.txt`/`.md`/`.pdf` or pasted text), messy-notes cleanup, automatic flashcard generation, flashcard study mode with mastery tracking, quiz mode, Pomodoro timer, and GitHub Pages deployment.
+**Working now:** subject/class organization, notes upload (`.txt`/`.md`/`.pdf` or pasted text), messy-notes cleanup, automatic flashcard generation, flashcard study mode with mastery tracking, saved progress between visits, quiz mode, Pomodoro timer, and GitHub Pages deployment.
 
 **Known limitations:**
 
 * Flashcards are generated with text-pattern rules, not AI yet.
 * PDF upload only works for PDFs that contain real text. Scanned PDFs (pictures of pages) and password-protected PDFs can't be read, and only the first 150 pages of a PDF are used. PDFs with two columns can come out in a jumbled order, so check the text before generating.
-* Data isn't saved yet: refreshing the page resets subjects, sets, and progress.
+* Data is saved in your browser only. It doesn't sync between devices, clearing site data erases it, and very large sets can fill the browser's storage (the app shows a warning if saving fails).
 
 ## Future Development
 
 * AI-powered flashcard and quiz generation (Claude API via a secure server-side proxy)
 * Reading scanned PDFs and images (OCR)
-* Saving data between sessions (localStorage or a database)
+* Syncing data across devices (accounts and a database)
 * Quiz score history over time
 * Game-based study modes
 

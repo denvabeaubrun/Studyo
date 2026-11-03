@@ -44,6 +44,54 @@ Ribosome - Builds proteins from amino acids
 
 Studyo turns each line into a flashcard (front: the term, back: the definition). The student can then flip through the cards, mark which ones they've mastered, take a multiple-choice quiz, and use the Pomodoro timer to stay focused.
 
+## Requirements
+
+### Who it's for and what they need
+
+Studyo is for students who keep notes in messy formats (typed notes, copied text, PDFs from a professor) and want to practice from them without retyping everything. Their needs:
+
+* Keep material for different classes organized in one place.
+* Turn notes into practice material quickly, whatever format the notes are in.
+* Study in more than one way (flip cards, quiz) and see what they've mastered.
+* Stay focused while studying.
+* Get a clear message, not a broken result, when an upload doesn't work.
+
+### Requirements
+
+| ID | User need | Feature | Input -> output | How it's checked |
+|----|-----------|---------|-----------------|------------------|
+| R1 | Keep classes organized | Subjects, classes, and study sets | Names and colors -> subject grid with classes and sets inside | Manual |
+| R2 | Make cards from notes | Card generation (`generateCards.js`) | Pasted text or `.txt`/`.md` -> flashcards | Automated tests |
+| R3 | Use messy notes as they are | Notes cleanup (`cleanNotes`) | Split words, wrapped lines, page numbers, repeated headers -> clean card text | Automated tests |
+| R4 | Use PDFs from class | PDF reader (`readPdf.js`) | Text PDF up to 20 MB and 150 pages -> editable text in the notes box | Manual + automated tests for line rebuilding |
+| R5 | Not get broken results | Upload error messages | Scanned, password-protected, damaged, or oversized file -> clear message, no cards | Manual |
+| R6 | Study by flipping cards | Flashcard viewer | A set -> cards marked "Got it" or "Still learning" | Manual |
+| R7 | Test myself | Quiz mode | A set -> multiple-choice quiz | Manual |
+| R8 | Stay focused | Pomodoro timer (always visible) | Start/pause -> 25-minute focus sessions with breaks and music | Manual |
+| R9 | See what I've mastered | Progress tracker | Marked cards -> overall and per-subject mastery % | Manual |
+| R10 | Use it without installing anything | GitHub Pages deploy | Merge to `main` -> live site updates | GitHub Actions run is green |
+
+### Measurable targets
+
+* **M1.** Every "Term: definition" line in pasted notes becomes exactly one card. Checked by automated tests.
+* **M2.** The 3-page messy test PDF produces 8 cards, with no cards made from the repeated header or page numbers.
+* **M3.** An upload that is over 20 MB, password protected, damaged, or has no text creates 0 cards and shows a message.
+* **M4.** Mastery % always equals cards marked "Got it" divided by total cards, shown overall and per subject.
+* **M5.** All automated tests (26 now) pass and the build succeeds before a pull request is merged.
+
+### Use cases
+
+1. **Quick study set (expected input):** a student pastes "Term: definition" lines for a biology unit and gets one card per line.
+2. **Messy PDF (expected input):** a student uploads a PDF with page numbers, a header on every page, and words split across lines. The text is cleaned, shown for editing, and turned into cards.
+3. **Study session:** a student runs a 25-minute Pomodoro, flips cards, marks the ones they know, and sees the progress percentage go up.
+4. **Bad upload (unexpected input):** a student uploads a scan of a page. Studyo explains that no text was found and asks for a text-based PDF or pasted text instead of making empty cards.
+
+### Assumptions and constraints
+
+* Notes are mostly text. Scanned pages and images aren't supported yet.
+* Everything runs in the browser. There are no accounts and no saving between visits yet.
+* An API key can't be kept safely in browser code, so AI generation needs a small server-side proxy first.
+
 ## Technology
 
 ### Frontend

@@ -5,6 +5,7 @@ All notable changes to Studyo are listed here, newest first.
 ## [Unreleased]
 
 ### Added
+- README Requirements section: user needs, a requirements table (need, feature, input and output, how it is checked), measurable targets, use cases including a bad-input case, and assumptions.
 - PDF upload. The text is read in the browser and shown in the notes box so it can be checked and edited before cards are made. Handles up to 20 MB and 150 pages; scanned or password-protected PDFs get a clear message.
 - Messy-notes cleanup (`cleanNotes`): rejoins words split by a hyphen at the end of a line, rejoins sentences broken across lines, removes page numbers and headers/footers that repeat on every PDF page, and fixes ligatures and odd spaces.
 - New card formats: `Q:` / `A:` pairs, a question line followed by its answer, and "X is/are ..." sentences.

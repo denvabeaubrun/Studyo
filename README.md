@@ -18,6 +18,9 @@
 * ❓ **Quiz Mode**
   Multiple-choice quizzes built from a study set, with randomized answer choices and a score.
 
+* 🎮 **Match Game**
+  Pair each term with its definition against the clock. Each round uses up to 6 cards from a set, and shows your time and mistakes at the end.
+
 * ⏱️ **Pomodoro Timer**
   Focus (25 min), short break (5 min), and long break (15 min) modes, with a built-in music player.
 
@@ -30,7 +33,7 @@
 2. **Add your study notes**
 3. **Generate a study set**
 4. **Study with flashcards**
-5. **Test yourself with a quiz**
+5. **Test yourself with a quiz, or play Match**
 6. **Track your progress**
 
 ### Example
@@ -71,6 +74,7 @@ Studyo is for students who keep notes in messy formats (typed notes, copied text
 | R9 | See what I've mastered | Progress tracker | Marked cards -> overall and per-subject mastery % | Manual |
 | R10 | Keep my work between visits | Saving in the browser (`storage.js`) | Any change -> still there after a refresh; "Reset saved data" returns to the samples | Automated tests + manual |
 | R11 | Use it without installing anything | GitHub Pages deploy | Merge to `main` -> live site updates | GitHub Actions run is green |
+| R12 | Practice without it feeling repetitive | Match game (`MatchGame.jsx`, `matchGame.js`) | A set with 2 or more different cards -> timed pairing of terms and definitions, with time and mistakes shown | Automated tests + manual |
 
 ### Measurable targets
 
@@ -79,7 +83,8 @@ Studyo is for students who keep notes in messy formats (typed notes, copied text
 * **M3.** An upload that is over 20 MB, password protected, damaged, or has no text creates 0 cards and shows a message.
 * **M4.** Mastery % always equals cards marked "Got it" divided by total cards, shown overall and per subject.
 * **M5.** After a refresh, subjects, sets, and mastered cards are exactly as they were. Saved data that is damaged or out of date never crashes the app; it falls back to the sample data. Checked by automated tests and in a browser.
-* **M6.** All automated tests (40 now) pass and the build succeeds before a pull request is merged.
+* **M6.** In Match, every card in a round appears once as a term and once as a definition, no two cards share the same front or back, and a round can be completed by pairing every tile. Checked by automated tests and in a browser.
+* **M7.** All automated tests (53 now) pass and the build succeeds before a pull request is merged.
 
 ### Use cases
 
@@ -123,6 +128,7 @@ src/
 │   ├── UploadModal.jsx       # Paste or upload notes
 │   ├── FlashcardViewer.jsx   # Flip through cards, mark mastery
 │   ├── QuizView.jsx          # Multiple-choice quiz
+│   ├── MatchGame.jsx         # Match game: pair terms with definitions
 │   ├── Pomodoro.jsx          # Study timer + music player
 │   ├── Stars.jsx             # Decorative star field (homepage)
 │   └── Critters.jsx          # Decorative animated characters
@@ -132,6 +138,7 @@ src/
 │   └── usePersistentSubjects.js  # Loads and saves data in the browser
 ├── utils/
 │   ├── generateCards.js      # Notes → flashcards logic
+│   ├── matchGame.js          # Match game rules (build a round, check a pair)
 │   ├── readPdf.js            # PDF text extraction
 │   └── storage.js            # Saves/loads data in local storage
 ├── App.jsx                   # Main app: subjects, classes, sets, navigation
@@ -155,6 +162,9 @@ Provides the interface for adding study material through pasted notes or uploade
 
 **`components/FlashcardViewer.jsx`**
 Displays study cards one at a time and allows students to mark cards as either "Got it" or "Still learning."
+
+**`components/MatchGame.jsx` and `utils/matchGame.js`**
+The Match game. `matchGame.js` builds a round (up to 6 cards, skipping cards that share a front or back) and checks pairs; `MatchGame.jsx` is the screen with the timer, mistake count, and results. It doesn't change which cards are marked mastered.
 
 **`components/QuizView.jsx`**
 Creates multiple-choice quizzes from study sets, including randomized answer choices and score tracking.
@@ -219,7 +229,7 @@ Every push to `main` automatically builds the app and deploys it to GitHub Pages
 
 Studyo is an ongoing project developed for **CISC 4900**.
 
-**Working now:** subject/class organization, notes upload (`.txt`/`.md`/`.pdf` or pasted text), messy-notes cleanup, automatic flashcard generation, flashcard study mode with mastery tracking, saved progress between visits, quiz mode, Pomodoro timer, and GitHub Pages deployment.
+**Working now:** subject/class organization, notes upload (`.txt`/`.md`/`.pdf` or pasted text), messy-notes cleanup, automatic flashcard generation, flashcard study mode with mastery tracking, the Match game, saved progress between visits, quiz mode, Pomodoro timer, and GitHub Pages deployment.
 
 **Known limitations:**
 
@@ -233,7 +243,7 @@ Studyo is an ongoing project developed for **CISC 4900**.
 * Reading scanned PDFs and images (OCR)
 * Syncing data across devices (accounts and a database)
 * Quiz score history over time
-* Game-based study modes
+* More game modes (memory flip, speed round)
 
 ## Author
 

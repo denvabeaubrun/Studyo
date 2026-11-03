@@ -5,6 +5,8 @@ All notable changes to Studyo are listed here, newest first.
 ## [Unreleased]
 
 ### Added
+- Match game, a third way to study next to Flashcards and Quiz. Pair terms with definitions against a timer; up to 6 cards per round, with time and mistakes shown at the end and a "Play again" button. It replaces the disabled "Game" button. Works with keyboard and screen readers, and respects reduced-motion settings.
+- 13 new tests for the Match rules (`matchGame.test.js`).
 - Saved progress. Subjects, sets, and mastered cards are saved in the browser (local storage) and are still there after a refresh. Saved data is checked on load and falls back to the sample data if it is damaged. If saving fails (storage full or blocked), a warning is shown. A "Reset saved data" button in the footer clears it.
 - 14 new tests for saving and loading (`storage.test.js`).
 - README Requirements section: user needs, a requirements table (need, feature, input and output, how it is checked), measurable targets, use cases including a bad-input case, and assumptions.

@@ -699,3 +699,17 @@ body {
 .flashcard:not(.flashcard-flipped) .flashcard-back {
   visibility: hidden;
 }
+
+/* Shown when the browser can't save (storage full or blocked) */
+.save-warning {
+  position: relative;
+  z-index: 1;
+  max-width: 640px;
+  margin: 0 auto 16px;
+  padding: 10px 16px;
+  font-size: 14px;
+  color: #7a1616;
+  background: #ffe9e9;
+  border: 2px solid #bf2222;
+  border-radius: 12px;
+}

@@ -5,6 +5,7 @@ All notable changes to Studyo are listed here, newest first.
 ## [Unreleased]
 
 ### Added
+- Five ad-free music tracks for the timer (Rain Piano, Soft Music, Lullaby, Inspiring Violin, Rain Sounds) from Pixabay, served from `public/music` with the artists credited on the pod's screen.
 - Brain Fog timer on/off switch, remembered in the browser, for students who read more slowly, use a screen reader, or find time pressure stressful. With the timer off there is no speed bonus (500 points per right answer), so the score stays fair.
 - 6 new tests for playing Brain Fog without the timer (`fogGame.test.js`).
 - Privacy notice in the footer and the upload box: no accounts or tracking, and notes never leave the browser.
@@ -27,6 +28,7 @@ All notable changes to Studyo are listed here, newest first.
 - One-line tip under "My subjects".
 
 ### Changed
+- The timer no longer lists YouTube songs, because YouTube embeds can show ads. The privacy notice and README now say nothing loads from outside services.
 - The timer's YouTube songs are now instrumental study beats (Lofi Girl and Chillhop streams) instead of songs with vocals, which are less distracting while reading.
 - YouTube songs in the timer use YouTube's privacy-enhanced mode (`youtube-nocookie.com`).
 - Study set buttons wrap onto a second line on narrow screens.

@@ -25,7 +25,7 @@
   A timed quiz game. Answer before the 15-second timer runs out (the timer can be turned off): faster answers and streaks score more points, and right answers clear a fog cloud. Wrong or late answers let the fog creep back. At the end you see your score, accuracy, best streak, and the cards you missed. Press 1 to 4 to answer.
 
 * ⏱️ **Pomodoro Timer**
-  Focus (25 min), short break (5 min), and long break (15 min) modes, with a built-in music player.
+  Focus (25 min), short break (5 min), and long break (15 min) modes, with a built-in music player (ad-free piano, violin and rain tracks, plus rain and brown noise).
 
 * 📈 **Mastery Tracking**
   Mark cards "Got it" or "Still learning" and see a mastery progress bar for each set.
@@ -122,7 +122,7 @@ Studyo is for students who keep notes in messy formats (typed notes, copied text
 * There are **no accounts, no ads, no analytics, and no tracking**. Studyo has no server and collects no personal information.
 * Notes, PDFs, cards, and progress are processed and saved **only in the browser on that device** (local storage). The original notes aren't saved, only the cards made from them.
 * PDFs are read in the browser (`readPdf.js`); files are never uploaded.
-* The only outside service is **YouTube**, and only when a student picks a YouTube song in the timer. It uses YouTube's privacy-enhanced mode (`youtube-nocookie.com`), so YouTube doesn't store cookies until a video plays. Music is off by default, and Rain and Brown Noise are generated in the browser.
+* **Nothing loads from outside services.** The timer's music is a set of files served from the site itself (`public/music`), with no ads or tracking. Music is off by default, and Rain and Brown Noise are generated in the browser. The code can still play YouTube songs (in privacy-enhanced mode, `youtube-nocookie.com`), but none are listed, because YouTube embeds can show ads.
 * This is explained in plain words in the site footer and in the upload box.
 * **If AI card generation is added later**, notes would be sent to an outside service for the first time. Before that ships, students must be told clearly and choose it themselves, with the current in-browser generator kept as the default, and the API key kept on a server, not in the browser.
 
@@ -130,7 +130,7 @@ Studyo is for students who keep notes in messy formats (typed notes, copied text
 
 * **Download my data:** saves a `.json` copy of all subjects, sets, and progress, so students own their work without needing an account.
 * **Reset saved data:** erases everything on this device. It asks for confirmation first and says exactly what will be erased.
-* **Music is opt-in:** nothing loads from YouTube unless a student picks a YouTube song.
+* **Music is opt-in:** no music plays until a student picks a track.
 * **Brain Fog timer on or off:** the choice is remembered on that device.
 
 ### No misleading or manipulative design
@@ -168,7 +168,7 @@ Studyo is for students who keep notes in messy formats (typed notes, copied text
 
 * **Academic integrity:** Studyo is for studying a student's own notes, not for completing graded work. Generated cards are a starting point to review, not a source of truth.
 * **Over-reliance:** cards are only as good as the notes they come from. The upload box and this README ask students to check them.
-* **Copyright:** students should only upload material they have the right to use for their own study. Studyo keeps it on their device and never shares or publishes it. Music plays through YouTube's official player, which keeps artists' rights and ads in place.
+* **Copyright:** students should only upload material they have the right to use for their own study. Studyo keeps it on their device and never shares or publishes it. The timer's music is from Pixabay under the Pixabay Content License, which allows use in a project like this; the artists are credited on the pod's screen anyway. Downloaded copies of commercial songs are never used.
 * **Wellbeing:** the Pomodoro timer builds in breaks, and the games avoid features designed to keep students in the app longer than they need.
 * **Access:** the app is free, works in any modern browser, and needs no account, so students without paid tools can use it.
 
@@ -203,7 +203,7 @@ src/
 │   ├── QuizView.jsx          # Multiple-choice quiz
 │   ├── MatchGame.jsx         # Match game: pair terms with definitions
 │   ├── FogGame.jsx           # Brain Fog game: timed quiz with a fog cloud
-│   ├── Pomodoro.jsx          # Study timer + music player
+│   ├── Pomodoro.jsx          # Study timer + music player (tracks in public/music)
 │   ├── Stars.jsx             # Decorative star field (homepage)
 │   └── Critters.jsx          # Decorative animated characters
 ├── data/

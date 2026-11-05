@@ -23,7 +23,7 @@ const STEPS = [
 
 const POD_FEATURES = [
   { emoji: '⏱', text: '25-minute focus sessions with short and long breaks' },
-  { emoji: '🌧', text: 'Rain, brown noise, or your own songs' },
+  { emoji: '🌧', text: 'Rain, brown noise, or calm piano and violin tracks' },
   { emoji: '🔄', text: 'Drag around the click wheel to change the volume' },
 ];
 
@@ -188,8 +188,8 @@ function HomeSections({ subjects, onNavigate, onReset, onDownload }) {
         <p className="hs-privacy">
           🔒 <b>Your privacy:</b> Studyo has no accounts, ads or tracking. Your subjects, notes and
           progress are saved only in this browser on this device and are never sent to us. On a shared
-          computer, use &ldquo;Reset saved data&rdquo; when you&rsquo;re done. YouTube songs in the timer
-          load from YouTube in privacy-enhanced mode; Rain and Brown Noise are made in your browser.
+          computer, use &ldquo;Reset saved data&rdquo; when you&rsquo;re done. The timer&rsquo;s music plays from
+          this site with no ads, and Rain and Brown Noise are made in your browser.
         </p>
       </footer>
     </div>

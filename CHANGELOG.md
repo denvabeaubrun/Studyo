@@ -5,6 +5,11 @@ All notable changes to Studyo are listed here, newest first.
 ## [Unreleased]
 
 ### Added
+- Brain Fog timer on/off switch, remembered in the browser, for students who read more slowly, use a screen reader, or find time pressure stressful. With the timer off there is no speed bonus (500 points per right answer), so the score stays fair.
+- 6 new tests for playing Brain Fog without the timer (`fogGame.test.js`).
+- Privacy notice in the footer and the upload box: no accounts or tracking, and notes never leave the browser.
+- "Download my data" button in the footer that saves all subjects, sets and progress as a `.json` file.
+- Responsible Design section in the README: who is affected, privacy, data choices, honest design, consequences, limitations and bias, vulnerable users, and ethics.
 - Brain Fog game, a fourth way to study. A timed quiz (15 seconds per question, up to 10 questions) where right answers clear a fog cloud. Faster answers and streaks score more points; missed cards are listed at the end with their answers. Keys 1 to 4 pick an answer. Questions go both ways (term to definition and definition to term).
 - 26 new tests for the Brain Fog rules (`fogGame.test.js`).
 - Match game, a third way to study next to Flashcards and Quiz. Pair terms with definitions against a timer; up to 6 cards per round, with time and mistakes shown at the end and a "Play again" button. It replaces the disabled "Game" button. Works with keyboard and screen readers, and respects reduced-motion settings.
@@ -22,6 +27,8 @@ All notable changes to Studyo are listed here, newest first.
 - One-line tip under "My subjects".
 
 ### Changed
+- YouTube songs in the timer use YouTube's privacy-enhanced mode (`youtube-nocookie.com`).
+- Study set buttons wrap onto a second line on narrow screens.
 - Match and Brain Fog share one helper for picking cards without confusing duplicates (`pickDistinctCards`).
 - The starting data moved from `App.jsx` into `data/defaultSubjects.js`.
 - The deploy workflow uses Node 22 (required by the PDF library, `pdfjs-dist`).

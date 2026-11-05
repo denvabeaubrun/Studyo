@@ -10,6 +10,7 @@
 //   subjects          - the subjects array from App.jsx (subjects -> classes -> sets -> cards)
 //   onNavigate(id)    - scrolls to a section; same function the top bar uses
 //   onReset()         - the footer's "Reset saved data" button
+//   onDownload()      - the footer's "Download my data" button
 
 import { useEffect, useRef } from 'react';
 import './HomeSections.css';
@@ -90,7 +91,7 @@ function getProgress(subjects) {
 
 const percent = (done, total) => Math.round((done / total) * 100);
 
-function HomeSections({ subjects, onNavigate, onReset }) {
+function HomeSections({ subjects, onNavigate, onReset, onDownload }) {
   const ref = useReveal();
   const rows = getProgress(subjects);
   const totalDone = rows.reduce((sum, row) => sum + row.done, 0);
@@ -181,8 +182,15 @@ function HomeSections({ subjects, onNavigate, onReset }) {
           <button type="button" onClick={() => onNavigate('how-it-works')}>How it works</button>
           <button type="button" onClick={() => onNavigate('progress')}>Progress</button>
           <button type="button" onClick={() => onNavigate('meet-the-pod')}>The pod</button>
+          <button type="button" onClick={onDownload}>Download my data</button>
           <button type="button" onClick={onReset}>Reset saved data</button>
         </nav>
+        <p className="hs-privacy">
+          🔒 <b>Your privacy:</b> Studyo has no accounts, ads or tracking. Your subjects, notes and
+          progress are saved only in this browser on this device and are never sent to us. On a shared
+          computer, use &ldquo;Reset saved data&rdquo; when you&rsquo;re done. YouTube songs in the timer
+          load from YouTube in privacy-enhanced mode; Rain and Brown Noise are made in your browser.
+        </p>
       </footer>
     </div>
   );

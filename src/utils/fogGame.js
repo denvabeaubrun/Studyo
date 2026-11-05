@@ -8,6 +8,9 @@
 //   - Every question has 4 answers (fewer if the set is small) and 15 seconds.
 //   - A right answer scores 500 to 1000 points, more the faster you answer, plus a
 //     streak bonus. A wrong answer or running out of time scores 0 and breaks the streak.
+//   - The timer can be turned off. Then there is no time limit and no speed bonus:
+//     every right answer scores 500 points plus the streak bonus, so turning the
+//     timer off never gives a higher score.
 //   - The fog starts at 100%. Each right answer clears an equal share of it; each
 //     wrong answer lets half a share creep back. At the end, less fog is better.
 //
@@ -82,10 +85,11 @@ export function fogTier(cleared) {
   return 'Thick fog. Try again!';
 }
 
-// The starting state for a new game.
-export function createGame(questions) {
+// The starting state for a new game. Pass { timed: false } to play without the timer.
+export function createGame(questions, { timed = true } = {}) {
   return {
     questions,
+    timed,               // false = no time limit and no speed bonus
     index: 0,
     phase: 'asking',     // 'asking' (timer running) -> 'revealed' (answer shown) -> 'done'
     timeLeft: TIME_LIMIT,
@@ -107,7 +111,7 @@ function resolveAnswer(state, picked) {
   const isCorrect = picked === question.correctIndex;
   const total = state.questions.length;
   const streak = isCorrect ? state.streak + 1 : 0;
-  const points = isCorrect ? pointsFor(state.timeLeft, streak) : 0;
+  const points = isCorrect ? pointsFor(state.timed ? state.timeLeft : 0, streak) : 0;
 
   return {
     ...state,
@@ -124,11 +128,12 @@ function resolveAnswer(state, picked) {
   };
 }
 
-// Actions: { type: 'TICK' } | { type: 'ANSWER', index } | { type: 'NEXT' } | { type: 'RESTART', questions }
+// Actions: { type: 'TICK' } | { type: 'ANSWER', index } | { type: 'NEXT' }
+//        | { type: 'RESTART', questions } | { type: 'SET_TIMED', timed }
 export function fogReducer(state, action) {
   switch (action.type) {
     case 'TICK': {
-      if (state.phase !== 'asking') return state;
+      if (state.phase !== 'asking' || !state.timed) return state;
       const timeLeft = state.timeLeft - TICK;
       return timeLeft <= 0 ? resolveAnswer({ ...state, timeLeft: 0 }, null) : { ...state, timeLeft };
     }
@@ -152,7 +157,10 @@ export function fogReducer(state, action) {
       };
     }
     case 'RESTART':
-      return createGame(action.questions);
+      return createGame(action.questions, { timed: state.timed });
+    case 'SET_TIMED':
+      // Turning the timer back on gives the open question a fresh 15 seconds.
+      return { ...state, timed: Boolean(action.timed), timeLeft: TIME_LIMIT };
     default:
       return state;
   }

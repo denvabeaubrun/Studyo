@@ -22,7 +22,7 @@
   Pair each term with its definition against the clock. Each round uses up to 6 cards from a set, and shows your time and mistakes at the end.
 
 * 🌫️ **Brain Fog Game**
-  A timed quiz game. Answer before the 15-second timer runs out: faster answers and streaks score more points, and right answers clear a fog cloud. Wrong or late answers let the fog creep back. At the end you see your score, accuracy, best streak, and the cards you missed. Press 1 to 4 to answer.
+  A timed quiz game. Answer before the 15-second timer runs out (the timer can be turned off): faster answers and streaks score more points, and right answers clear a fog cloud. Wrong or late answers let the fog creep back. At the end you see your score, accuracy, best streak, and the cards you missed. Press 1 to 4 to answer.
 
 * ⏱️ **Pomodoro Timer**
   Focus (25 min), short break (5 min), and long break (15 min) modes, with a built-in music player.
@@ -79,6 +79,8 @@ Studyo is for students who keep notes in messy formats (typed notes, copied text
 | R11 | Use it without installing anything | GitHub Pages deploy | Merge to `main` -> live site updates | GitHub Actions run is green |
 | R12 | Practice without it feeling repetitive | Match game (`MatchGame.jsx`, `matchGame.js`) | A set with 2 or more different cards -> timed pairing of terms and definitions, with time and mistakes shown | Automated tests + manual |
 | R13 | Practice under pressure, with quick feedback | Brain Fog game (`FogGame.jsx`, `fogGame.js`) | A set with 2 or more different cards -> up to 10 timed questions, points for speed and streaks, a score, and a list of missed cards | Automated tests + manual |
+| R14 | Keep control of my own data | Privacy notice, "Download my data", "Reset saved data" | Click -> a `.json` copy of all data, or all saved data erased after a confirmation | Manual |
+| R15 | Practice without time pressure | Brain Fog timer on/off switch | Timer off -> no time limit and no speed bonus (500 points per right answer); the choice is remembered | Automated tests + manual |
 
 ### Measurable targets
 
@@ -89,7 +91,8 @@ Studyo is for students who keep notes in messy formats (typed notes, copied text
 * **M5.** After a refresh, subjects, sets, and mastered cards are exactly as they were. Saved data that is damaged or out of date never crashes the app; it falls back to the sample data. Checked by automated tests and in a browser.
 * **M6.** In Match, every card in a round appears once as a term and once as a definition, no two cards share the same front or back, and a round can be completed by pairing every tile. Checked by automated tests and in a browser.
 * **M7.** In Brain Fog, every question has the right answer exactly once among its options, a right answer scores 500 to 1000 points plus a streak bonus, a wrong or late answer scores 0, and fog cleared never goes below 0% or above 100%. Checked by automated tests and in a browser.
-* **M8.** All automated tests (79 now) pass and the build succeeds before a pull request is merged.
+* **M8.** With the Brain Fog timer off, a question never times out and a right answer scores exactly 500 points plus the streak bonus, never more than with the timer on. Checked by automated tests.
+* **M9.** All automated tests (85 now) pass and the build succeeds before a pull request is merged.
 
 ### Use cases
 
@@ -103,6 +106,71 @@ Studyo is for students who keep notes in messy formats (typed notes, copied text
 * Notes are mostly text. Scanned pages and images aren't supported yet.
 * Everything runs in the browser. Data is saved in this browser on this device only (local storage), with no accounts. It doesn't sync between devices, and clearing the site's data or using a private window starts fresh.
 * An API key can't be kept safely in browser code, so AI generation needs a small server-side proxy first.
+
+## Responsible Design
+
+### Who is affected
+
+* **Students (main users):** high school and college students studying for classes. Some may be under 13 if a teacher shares the site, so Studyo is built to collect nothing about anyone.
+* **Students who need extra support:** people who use a keyboard or screen reader, who read more slowly or are learning English, who are sensitive to motion, or who get anxious under time pressure.
+* **People sharing a device:** students on a family, school, or library computer, where the next person could see saved notes.
+* **Teachers and classmates:** indirectly, through how well the cards match the real course material and whether students rely on them too much.
+* **Content owners:** notes and PDFs often come from professors or textbooks, and the songs in the timer belong to their artists.
+
+### Privacy and data collection
+
+* There are **no accounts, no ads, no analytics, and no tracking**. Studyo has no server and collects no personal information.
+* Notes, PDFs, cards, and progress are processed and saved **only in the browser on that device** (local storage). The original notes aren't saved, only the cards made from them.
+* PDFs are read in the browser (`readPdf.js`); files are never uploaded.
+* The only outside service is **YouTube**, and only when a student picks a YouTube song in the timer. It uses YouTube's privacy-enhanced mode (`youtube-nocookie.com`), so YouTube doesn't store cookies until a video plays. Music is off by default, and Rain and Brown Noise are generated in the browser.
+* This is explained in plain words in the site footer and in the upload box.
+* **If AI card generation is added later**, notes would be sent to an outside service for the first time. Before that ships, students must be told clearly and choose it themselves, with the current in-browser generator kept as the default, and the API key kept on a server, not in the browser.
+
+### Choices students have about their data
+
+* **Download my data:** saves a `.json` copy of all subjects, sets, and progress, so students own their work without needing an account.
+* **Reset saved data:** erases everything on this device. It asks for confirmation first and says exactly what will be erased.
+* **Music is opt-in:** nothing loads from YouTube unless a student picks a YouTube song.
+* **Brain Fog timer on or off:** the choice is remembered on that device.
+
+### No misleading or manipulative design
+
+* No streak-loss guilt messages, notifications, countdown sales, ads, or "are you sure you want to stop studying?" screens. Leaving is always one click ("Back").
+* Game rewards (points, streaks, fog cleared) are only about answering correctly, never about time spent in the app.
+* Results are honest: the end screens show accuracy, mistakes, and missed cards, not only the wins.
+* Turning the Brain Fog timer off removes the speed bonus, so the score stays fair and the switch can't be used to inflate it.
+* The games are labeled as practice and **don't change mastery**. Only the student marking a card "Got it" does that, so the progress tracker isn't inflated by games.
+
+### Communicating consequences
+
+* Erasing data asks for confirmation and states what will be lost.
+* If saving fails (storage full or blocked), a warning says changes will be lost on refresh.
+* Bad uploads (scanned, password protected, too large) get a clear message instead of empty cards.
+* Brain Fog shows the correct answer after every miss, explains on screen what the timer switch changes, and says the game doesn't change mastery.
+
+### Bias and limitations
+
+* **Card generation is rule-based** and tuned to English-style notes ("Term: definition", "Q: / A:", "X is ..."). Notes in other languages, math with symbols, diagrams, and very informal notes can produce missing or wrong cards. The upload box tells students to check their cards.
+* **Wrong answer choices** in Quiz and Brain Fog come from other cards in the same set, so a small set gives fewer, easier choices, and similar cards can make a question confusingly hard.
+* **Mastery is self-reported.** A student can mark "Got it" too early; the tracker shows what they marked, not what they know.
+* **Timers favor fast readers.** That's why the Brain Fog timer can be turned off, and Match only measures time without a limit.
+* **PDF reading** can jumble two-column layouts and can't read scanned pages.
+* **Device only:** data is lost if site data is cleared, and doesn't move between devices except through "Download my data".
+
+### Protecting vulnerable users
+
+* **Younger students:** no sign-up, no personal information, no chat or sharing features, and no ads.
+* **Disabilities:** the games work with the keyboard (keys 1-4 in Brain Fog, Tab and Enter in Match), have screen-reader labels and spoken status updates, and respect the device's reduced-motion setting.
+* **Test anxiety:** the Brain Fog timer can be turned off, every game starts fresh, and a low score leads to a review list, not a punishment.
+* **Shared computers:** the footer reminds students to use "Reset saved data" when done.
+
+### Ethical and social considerations
+
+* **Academic integrity:** Studyo is for studying a student's own notes, not for completing graded work. Generated cards are a starting point to review, not a source of truth.
+* **Over-reliance:** cards are only as good as the notes they come from. The upload box and this README ask students to check them.
+* **Copyright:** students should only upload material they have the right to use for their own study. Studyo keeps it on their device and never shares or publishes it. Music plays through YouTube's official player, which keeps artists' rights and ads in place.
+* **Wellbeing:** the Pomodoro timer builds in breaks, and the games avoid features designed to keep students in the app longer than they need.
+* **Access:** the app is free, works in any modern browser, and needs no account, so students without paid tools can use it.
 
 ## Technology
 

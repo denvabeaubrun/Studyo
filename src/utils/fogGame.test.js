@@ -216,3 +216,44 @@ describe('fogReducer', () => {
     expect(again.questions).toHaveLength(5);
   });
 });
+
+describe('playing without the timer', () => {
+  const untimed = (n = 4) => fogReducer(fixedGame(n), { type: 'SET_TIMED', timed: false });
+
+  it('starts timed unless told otherwise', () => {
+    expect(fixedGame().timed).toBe(true);
+    expect(createGame(fixedGame().questions, { timed: false }).timed).toBe(false);
+  });
+
+  it('never runs out of time when the timer is off', () => {
+    let g = untimed();
+    for (let i = 0; i < TIME_LIMIT * 2; i++) g = fogReducer(g, { type: 'TICK' });
+    expect(g).toMatchObject({ phase: 'asking', timeLeft: TIME_LIMIT });
+  });
+
+  it('gives no speed bonus, so turning the timer off never scores more', () => {
+    const off = answer(untimed(), 0);
+    const on = answer(fixedGame(), 0);
+    expect(off.lastPoints).toBe(500);
+    expect(off.lastPoints).toBeLessThan(on.lastPoints);
+  });
+
+  it('still counts streaks and clears fog without the timer', () => {
+    let g = answer(untimed(), 0);
+    g = answer(next(g), 0);
+    expect(g).toMatchObject({ lastPoints: 550, streak: 2, fog: 50 });
+  });
+
+  it('turning the timer back on gives the open question a full 15 seconds', () => {
+    let g = fixedGame();
+    for (let i = 0; i < 100; i++) g = fogReducer(g, { type: 'TICK' });
+    g = fogReducer(g, { type: 'SET_TIMED', timed: false });
+    g = fogReducer(g, { type: 'SET_TIMED', timed: true });
+    expect(g).toMatchObject({ timed: true, timeLeft: TIME_LIMIT });
+  });
+
+  it('keeps the timer choice when the game restarts', () => {
+    const g = fogReducer(untimed(), { type: 'RESTART', questions: fixedGame(3).questions });
+    expect(g.timed).toBe(false);
+  });
+});

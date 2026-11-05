@@ -10,8 +10,10 @@
 //
 // The link for the section you are viewing is underlined. The bar gets a
 // faint bottom line once the page has scrolled.
+// The sun/moon button switches between light and dark mode (see hooks/useTheme.js).
 
 import { useEffect, useState } from 'react';
+import useTheme from '../hooks/useTheme';
 import './SiteNav.css';
 
 const LINKS = [
@@ -24,6 +26,8 @@ const LINKS = [
 function SiteNav({ onNavigate }) {
   const [active, setActive] = useState('top');
   const [scrolled, setScrolled] = useState(false);
+  const [theme, toggleTheme] = useTheme();
+  const dark = theme === 'dark';
 
   useEffect(() => {
     function update() {
@@ -79,6 +83,15 @@ function SiteNav({ onNavigate }) {
         >
           <span className="snav-dot" aria-hidden="true" />
           <span>Timer</span>
+        </button>
+        <button
+          type="button"
+          className="snav-theme"
+          aria-label={dark ? 'Switch to light mode' : 'Switch to dark mode'}
+          title={dark ? 'Light mode' : 'Dark mode'}
+          onClick={toggleTheme}
+        >
+          <span aria-hidden="true">{dark ? '☀️' : '🌙'}</span>
         </button>
       </nav>
     </header>

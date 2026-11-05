@@ -6,8 +6,8 @@
 
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  background: #EAF6FC;   /* was #FFFFFF */
-  color: #1a1a1a;
+  background: var(--page-bg);   /* was #FFFFFF */
+  color: var(--ink);
   min-height: 100vh;
   overflow-x: clip;   /* full-width bands use 100vw, which includes the scrollbar */
 }
@@ -44,7 +44,7 @@ body {
 
 .subtitle {
   font-size: 20px;
-  color: #555;
+  color: var(--muted);
   margin-bottom: 16px;
   line-height: 1.5;
 }
@@ -65,7 +65,7 @@ body {
 .subjects-title {
   font-size: 24px;
   font-weight: 700;
-  color: #1a1a1a;
+  color: var(--ink);
 }
 
 .new-subject-button {
@@ -99,24 +99,24 @@ body {
 }
 
 .subject-card {
-  background: #FFF8F0;
-  border: 2px solid #1a1a1a;
+  background: var(--surface-warm);
+  border: 2px solid var(--line);
   border-radius: 20px;
   padding: 24px;
   cursor: pointer;
   text-align: center;
-  box-shadow: 4px 4px 0 #1a1a1a;
+  box-shadow: 4px 4px 0 var(--line);
   transition: all 0.15s ease;
 }
 
 .subject-card:hover {
   transform: translate(-2px, -2px);
-  box-shadow: 6px 6px 0 #1a1a1a;
+  box-shadow: 6px 6px 0 var(--line);
 }
 
 .subject-card:active {
   transform: translate(2px, 2px);
-  box-shadow: 0 0 0 #1a1a1a;
+  box-shadow: 0 0 0 var(--line);
 }
 
 .subject-emoji {
@@ -127,12 +127,12 @@ body {
 .subject-name {
   font-size: 20px;
   font-weight: 700;
-  color: #1a1a1a;
+  color: inherit;   /* dark on bright cards, white on dark cards (Layout.css) */
   margin-bottom: 4px;
 }
 
 .back-button{
-  background: white;
+  background: var(--surface);
   color:orange;
   font-size:15px;
   border-radius: 20px;
@@ -152,10 +152,10 @@ body {
   display: flex;
   align-items: center;
   gap: 16px;
-  border: 2px solid #1a1a1a;
+  border: 2px solid var(--line);
   border-radius: 20px;
   padding: 20px 24px;
-  box-shadow: 4px 4px 0 #1a1a1a;
+  box-shadow: 4px 4px 0 var(--line);
   margin-bottom: 24px;
   text-align: left;
 }
@@ -168,7 +168,7 @@ body {
 .class-banner-name {
   font-size: 28px;
   font-weight: 800;
-  color: #1a1a1a;
+  color: var(--ink-on-color);
 }
 
 .class-actions-row {
@@ -179,8 +179,8 @@ body {
 
 .upload-notes-button {
   flex: 1;
-  background: #1a1a1a;
-  color: white;
+  background: var(--solid);
+  color: var(--on-solid);
   border: none;
   padding: 16px 20px;
   font-size: 16px;
@@ -203,33 +203,33 @@ body {
 }
 
 .pomodoro-button {
-  background: white;
-  color: #1a1a1a;
-  border: 2px solid #1a1a1a;
+  background: var(--surface);
+  color: var(--ink);
+  border: 2px solid var(--line);
   padding: 14px 20px;
   font-size: 16px;
   font-weight: 700;
   border-radius: 14px;
   cursor: pointer;
   font-family: inherit;
-  box-shadow: 0 3px 0 #1a1a1a;
+  box-shadow: 0 3px 0 var(--line);
   transition: all 0.15s ease;
   white-space: nowrap;
 }
 
 .pomodoro-button:hover {
   transform: translateY(2px);
-  box-shadow: 0 1px 0 #1a1a1a;
+  box-shadow: 0 1px 0 var(--line);
 }
 
 .pomodoro-button:active {
   transform: translateY(3px);
-  box-shadow: 0 0 0 #1a1a1a;
+  box-shadow: 0 0 0 var(--line);
 }
 
 .upload-hint {
   font-size: 14px;
-  color: #666;
+  color: var(--muted);
   text-align: left;
   margin-bottom: 32px;
 }
@@ -245,7 +245,7 @@ body {
 .sets-title {
   font-size: 20px;
   font-weight: 700;
-  color: #1a1a1a;
+  color: var(--ink);
 }
 
 .sets-empty {
@@ -262,7 +262,7 @@ body {
 
 .sets-empty-text {
   font-size: 15px;
-  color: #777;
+  color: var(--faint);
 }
 
 .sets-list {
@@ -272,11 +272,11 @@ body {
 }
 
 .set-card {
-  border: 2px solid #1a1a1a;
+  border: 2px solid var(--line);
   border-radius: 16px;
   padding: 20px;
-  box-shadow: 4px 4px 0 #1a1a1a;
-  background: #FFF8F0;
+  box-shadow: 4px 4px 0 var(--line);
+  background: var(--surface-warm);
   text-align: left;
   display: flex;
   justify-content: space-between;
@@ -293,20 +293,20 @@ body {
 .set-card-title {
   font-size: 18px;
   font-weight: 700;
-  color: #1a1a1a;
+  color: var(--ink);
   margin-bottom: 4px;
 }
 
 .set-card-meta {
   font-size: 13px;
-  color: #666;
+  color: var(--muted);
   margin-bottom: 10px;
 }
 
 .set-progress-track {
   width: 100%;
   height: 8px;
-  background: #e5e5e5;
+  background: var(--track);
   border-radius: 8px;
   overflow: hidden;
 }
@@ -324,9 +324,9 @@ body {
 }
 
 .set-action-button {
-  background: white;
-  color: #1a1a1a;
-  border: 2px solid #1a1a1a;
+  background: var(--surface);
+  color: var(--ink);
+  border: 2px solid var(--line);
   padding: 8px 14px;
   font-size: 13px;
   font-weight: 600;
@@ -337,8 +337,8 @@ body {
 }
 
 .set-action-button:hover {
-  background: #1a1a1a;
-  color: white;
+  background: var(--solid);
+  color: var(--on-solid);
 }
 
 .set-action-button:disabled {
@@ -347,8 +347,8 @@ body {
 }
 
 .set-action-button:disabled:hover {
-  background: white;
-  color: #1a1a1a;
+  background: var(--surface);
+  color: var(--ink);
 }
 
 /* Modal */
@@ -364,10 +364,10 @@ body {
 }
 
 .modal {
-  background: white;
-  border: 2px solid #1a1a1a;
+  background: var(--surface);
+  border: 2px solid var(--line);
   border-radius: 20px;
-  box-shadow: 6px 6px 0 #1a1a1a;
+  box-shadow: 6px 6px 0 var(--line);
   max-width: 480px;
   width: 100%;
   max-height: 90vh;
@@ -380,14 +380,14 @@ body {
   justify-content: space-between;
   align-items: center;
   padding: 20px 24px;
-  border-bottom: 2px solid #1a1a1a;
+  border-bottom: 2px solid var(--line);
   border-radius: 18px 18px 0 0;
 }
 
 .modal-title {
   font-size: 20px;
   font-weight: 800;
-  color: #1a1a1a;
+  color: var(--ink-on-color);
 }
 
 .modal-close {
@@ -395,7 +395,7 @@ body {
   border: none;
   font-size: 18px;
   cursor: pointer;
-  color: #1a1a1a;
+  color: var(--ink-on-color);
 }
 
 .modal-body {
@@ -407,7 +407,7 @@ body {
 .modal-label {
   font-size: 13px;
   font-weight: 700;
-  color: #444;
+  color: var(--muted);
   margin-bottom: 6px;
   margin-top: 14px;
 }
@@ -418,7 +418,7 @@ body {
 
 .modal-input,
 .modal-textarea {
-  border: 2px solid #1a1a1a;
+  border: 2px solid var(--line);
   border-radius: 12px;
   padding: 10px 14px;
   font-size: 15px;
@@ -428,8 +428,8 @@ body {
 
 .modal-file-button {
   margin-top: 16px;
-  background: white;
-  border: 2px dashed #1a1a1a;
+  background: var(--surface);
+  border: 2px dashed var(--line);
   border-radius: 12px;
   padding: 12px;
   font-size: 14px;
@@ -439,7 +439,7 @@ body {
 }
 
 .modal-file-button:hover {
-  background: #f5f5f5;
+  background: var(--hover);
 }
 
 .modal-error {
@@ -458,7 +458,7 @@ body {
   margin-top: 12px;
   font-size: 13px;
   line-height: 1.45;
-  color: #555;
+  color: var(--muted);
 }
 
 .modal-footer {
@@ -466,12 +466,12 @@ body {
   justify-content: flex-end;
   gap: 10px;
   padding: 16px 24px;
-  border-top: 2px solid #1a1a1a;
+  border-top: 2px solid var(--line);
 }
 
 .modal-cancel-button {
-  background: white;
-  border: 2px solid #1a1a1a;
+  background: var(--surface);
+  border: 2px solid var(--line);
   border-radius: 12px;
   padding: 10px 18px;
   font-weight: 600;
@@ -480,8 +480,8 @@ body {
 }
 
 .modal-generate-button {
-  background: #1a1a1a;
-  color: white;
+  background: var(--solid);
+  color: var(--on-solid);
   border: none;
   border-radius: 12px;
   padding: 10px 18px;
@@ -513,7 +513,7 @@ body {
 .study-progress-label {
   font-size: 14px;
   font-weight: 600;
-  color: #555;
+  color: var(--muted);
 }
 
 /* Flashcards */
@@ -522,10 +522,10 @@ body {
   max-width: 480px;
   margin: 0 auto 24px;
   height: 260px;
-  border: 3px solid #1a1a1a;
+  border: 3px solid var(--line);
   border-radius: 20px;
   cursor: pointer;
-  box-shadow: 4px 4px 0 #1a1a1a;
+  box-shadow: 4px 4px 0 var(--line);
 }
 
 .flashcard-face {
@@ -542,12 +542,12 @@ body {
 }
 
 .flashcard-front {
-  background: #FFF8F0;
+  background: var(--surface-warm);
 }
 
 .flashcard-back {
   transform: rotateY(180deg);
-  color: #1a1a1a;
+  color: var(--ink-on-color);
 }
 
 .flashcard-flipped .flashcard-front {
@@ -572,7 +572,7 @@ body {
   position: absolute;
   bottom: 14px;
   font-size: 12px;
-  color: #999;
+  color: var(--faint);
 }
 
 .flashcard-nav-row {
@@ -583,8 +583,8 @@ body {
 }
 
 .flashcard-nav-button {
-  background: white;
-  border: 2px solid #1a1a1a;
+  background: var(--surface);
+  border: 2px solid var(--line);
   border-radius: 12px;
   padding: 10px 20px;
   font-weight: 600;
@@ -604,7 +604,7 @@ body {
 }
 
 .mark-button {
-  border: 2px solid #1a1a1a;
+  border: 2px solid var(--line);
   border-radius: 14px;
   padding: 12px 24px;
   font-weight: 700;
@@ -613,25 +613,25 @@ body {
 }
 
 .mark-still-learning {
-  background: white;
-  color: #1a1a1a;
+  background: var(--surface);
+  color: var(--ink);
 }
 
 .mark-got-it {
   background: #7DD3A0;
-  color: #1a1a1a;
+  color: var(--ink-on-color);
 }
 
 /* Quiz */
 .quiz-question-card {
   max-width: 520px;
   margin: 0 auto 24px;
-  border: 3px solid #1a1a1a;
+  border: 3px solid var(--line);
   border-radius: 20px;
   padding: 32px 24px;
   text-align: center;
-  box-shadow: 4px 4px 0 #1a1a1a;
-  background: #FFF8F0;
+  box-shadow: 4px 4px 0 var(--line);
+  background: var(--surface-warm);
 }
 
 .quiz-question-text {
@@ -648,19 +648,19 @@ body {
 }
 
 .quiz-option {
-  border: 2px solid #1a1a1a;
+  border: 2px solid var(--line);
   border-radius: 14px;
   padding: 14px 18px;
   font-size: 15px;
   font-weight: 600;
-  background: white;
+  background: var(--surface);
   cursor: pointer;
   font-family: inherit;
   text-align: left;
 }
 
 .quiz-option:hover:not(:disabled) {
-  background: #f5f5f5;
+  background: var(--hover);
 }
 
 .quiz-option:disabled {
@@ -669,12 +669,14 @@ body {
 
 .quiz-option-correct {
   background: #7DD3A0;
-  border-color: #1a1a1a;
+  border-color: var(--line);
+  color: var(--ink-on-color);
 }
 
 .quiz-option-wrong {
   background: #f3a6a6;
-  border-color: #1a1a1a;
+  border-color: var(--line);
+  color: var(--ink-on-color);
 }
 
 .quiz-results {
@@ -691,12 +693,12 @@ body {
 
 .quiz-results-score {
   font-size: 18px;
-  color: #444;
+  color: var(--muted);
 }
 /* Flashcard fix: front/back swap on click */
 .flashcard-back {
   transform: none;
-  color: #1a1a1a;
+  color: var(--ink-on-color);
 }
 .flashcard-flipped .flashcard-front {
   visibility: hidden;
@@ -716,9 +718,9 @@ body {
   margin: 0 auto 16px;
   padding: 10px 16px;
   font-size: 14px;
-  color: #7a1616;
-  background: #ffe9e9;
-  border: 2px solid #bf2222;
+  color: var(--warn-ink);
+  background: var(--warn-bg);
+  border: 2px solid var(--warn-line);
   border-radius: 12px;
 }
 
@@ -726,7 +728,7 @@ body {
 .match-hint {
   text-align: center;
   margin-bottom: 16px;
-  color: #444;
+  color: var(--muted);
 }
 .match-board {
   display: grid;
@@ -747,30 +749,32 @@ body {
   font-size: 15px;
   font-weight: 600;
   line-height: 1.3;
-  color: #1a1a1a;
+  color: var(--ink);
   text-align: center;
-  background: white;
-  border: 2px solid #1a1a1a;
+  background: var(--surface);
+  border: 2px solid var(--line);
   border-radius: 14px;
   cursor: pointer;
   overflow-wrap: anywhere;
 }
 .match-tile:hover:not(:disabled) {
-  background: #f5f5f5;
+  background: var(--hover);
 }
 .match-tile.is-selected {
-  background: #FFF8F0;
+  background: var(--surface-warm);
 }
 .match-tile.is-matched {
   background: #7DD3A0;
   cursor: default;
   opacity: 0.85;
+  color: var(--ink-on-color);
 }
 .match-tile.is-wrong {
   background: #f3a6a6;
+  color: var(--ink-on-color);
 }
 .match-tile:focus-visible {
-  outline: 3px solid #d62828;
+  outline: 3px solid var(--accent);
   outline-offset: 2px;
 }
 .match-status {
@@ -778,7 +782,7 @@ body {
   margin-top: 16px;
   text-align: center;
   font-size: 14px;
-  color: #444;
+  color: var(--muted);
 }
 @media (prefers-reduced-motion: no-preference) {
   .match-tile.is-wrong {
@@ -808,9 +812,9 @@ body {
   margin-bottom: 12px;
   overflow: hidden;
   background: #cfeaf7;
-  border: 3px solid #1a1a1a;
+  border: 3px solid var(--line);
   border-radius: 20px;
-  box-shadow: 4px 4px 0 #1a1a1a;
+  box-shadow: 4px 4px 0 var(--line);
 }
 .fog-svg {
   display: block;
@@ -830,14 +834,15 @@ body {
   font-size: 13px;
   font-weight: 700;
   background: rgba(255, 255, 255, 0.7);
-  border-top: 2px solid #1a1a1a;
+  border-top: 2px solid var(--line);
+  color: var(--ink-on-color);
 }
 .fog-meter-track {
   flex: 1;
   height: 12px;
   overflow: hidden;
-  background: #fff;
-  border: 2px solid #1a1a1a;
+  background: var(--surface);
+  border: 2px solid var(--line);
   border-radius: 8px;
 }
 .fog-meter-fill {
@@ -854,21 +859,22 @@ body {
   padding: 5px 14px;
   font-size: 14px;
   font-weight: 800;
-  color: #1a1a1a;
-  background: #fff;
-  border: 2px solid #1a1a1a;
+  color: var(--ink-on-color);
+  background: var(--surface);
+  border: 2px solid var(--line);
   border-radius: 999px;
 }
 .fog-chip--streak {
   background: #FBBF24;
+  color: var(--ink-on-color);
 }
 .fog-timer {
   position: relative;
   height: 22px;
   margin-bottom: 14px;
   overflow: hidden;
-  background: #fff;
-  border: 2px solid #1a1a1a;
+  background: var(--surface);
+  border: 2px solid var(--line);
   border-radius: 12px;
 }
 .fog-timer-fill {
@@ -886,6 +892,7 @@ body {
   place-items: center;
   font-size: 12px;
   font-weight: 800;
+  color: var(--ink-on-color);
 }
 .fog-prompt-label {
   text-align: center;
@@ -893,7 +900,7 @@ body {
   font-weight: 800;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: #555;
+  color: var(--muted);
 }
 .fog-prompt {
   margin: 4px 0 16px;
@@ -919,11 +926,11 @@ body {
   font-size: 15px;
   font-weight: 700;
   line-height: 1.3;
-  color: #1a1a1a;
+  color: var(--ink-on-color);
   text-align: left;
-  border: 2px solid #1a1a1a;
+  border: 2px solid var(--line);
   border-radius: 16px;
-  box-shadow: 3px 3px 0 #1a1a1a;
+  box-shadow: 3px 3px 0 var(--line);
   cursor: pointer;
 }
 .fog-option:hover:not(:disabled) {
@@ -933,7 +940,7 @@ body {
   cursor: default;
 }
 .fog-option:focus-visible {
-  outline: 3px solid #d62828;
+  outline: 3px solid var(--accent);
   outline-offset: 2px;
 }
 .fog-option-num {
@@ -944,8 +951,8 @@ body {
   height: 26px;
   font-size: 13px;
   font-weight: 800;
-  background: #fff;
-  border: 2px solid #1a1a1a;
+  background: var(--surface);
+  border: 2px solid var(--line);
   border-radius: 50%;
 }
 .fog-option-text {
@@ -958,7 +965,7 @@ body {
   font-weight: 800;
 }
 .fog-option.is-correct {
-  outline: 4px solid #1a1a1a;
+  outline: 4px solid var(--line);
   outline-offset: 2px;
 }
 .fog-option.is-wrong {
@@ -980,15 +987,15 @@ body {
 }
 .fog-stats {
   margin-top: 6px;
-  color: #444;
+  color: var(--muted);
 }
 .fog-review {
   max-width: 480px;
   margin: 18px auto 0;
   padding: 14px 18px;
   text-align: left;
-  background: #fff8f0;
-  border: 2px solid #1a1a1a;
+  background: var(--surface-warm);
+  border: 2px solid var(--line);
   border-radius: 16px;
 }
 .fog-review h4 {
@@ -1026,28 +1033,28 @@ body {
   font-family: inherit;
   font-size: 13px;
   font-weight: 600;
-  color: #1a1a1a;
-  background: white;
-  border: 2px solid #1a1a1a;
+  color: var(--ink);
+  background: var(--surface);
+  border: 2px solid var(--line);
   border-radius: 999px;
   cursor: pointer;
 }
 .fog-timer-toggle[aria-pressed="false"] {
-  background: #f0f0f0;
+  background: var(--track);
 }
 .fog-timer-toggle:focus-visible {
-  outline: 3px solid #d62828;
+  outline: 3px solid var(--accent);
   outline-offset: 2px;
 }
 .fog-untimed {
   margin-bottom: 14px;
   font-size: 13px;
-  color: #555;
+  color: var(--muted);
   text-align: center;
 }
 .fog-note {
   margin-top: 16px;
   font-size: 13px;
-  color: #666;
+  color: var(--muted);
   text-align: center;
 }

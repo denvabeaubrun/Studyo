@@ -5,6 +5,7 @@ All notable changes to Studyo are listed here, newest first.
 ## [Unreleased]
 
 ### Added
+- Dark mode, with a sun/moon switch in the top bar. It follows the device's setting until a choice is made, then remembers it in the browser. The saved theme is applied before the page draws, so there is no white flash. Colors now come from shared variables in `theme.css`; bright cards and answer buttons keep dark text in both themes.
 - Five ad-free music tracks for the timer (Rain Piano, Soft Music, Lullaby, Inspiring Violin, Rain Sounds) from Pixabay, served from `public/music` with the artists credited on the pod's screen.
 - Brain Fog timer on/off switch, remembered in the browser, for students who read more slowly, use a screen reader, or find time pressure stressful. With the timer off there is no speed bonus (500 points per right answer), so the score stays fair.
 - 6 new tests for playing Brain Fog without the timer (`fogGame.test.js`).

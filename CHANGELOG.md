@@ -27,6 +27,7 @@ All notable changes to Studyo are listed here, newest first.
 - One-line tip under "My subjects".
 
 ### Changed
+- The timer's YouTube songs are now instrumental study beats (Lofi Girl and Chillhop streams) instead of songs with vocals, which are less distracting while reading.
 - YouTube songs in the timer use YouTube's privacy-enhanced mode (`youtube-nocookie.com`).
 - Study set buttons wrap onto a second line on narrow screens.
 - Match and Brain Fog share one helper for picking cards without confusing duplicates (`pickDistinctCards`).

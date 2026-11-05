@@ -16,14 +16,15 @@ const TRACKS = [
   // { title: "Track name", artist: "Artist name", src: `${BASE}music/track-name.mp3` },
 ];
 
-// My favortite YouTube songs
+// Study beats: instrumental lofi, played through YouTube's own player (nothing is
+// downloaded or hosted here). Most are 24/7 livestreams, so the music doesn't stop
+// mid-session. Livestream links change when a stream restarts: if one says
+// "Video unavailable", replace its link with the channel's current stream.
 const YT_SONGS = [
-  { title: "Saturn", artist: "Sleeping At Last", url: "https://youtu.be/dzNvk80XY9s" },
-  { title: "Faded", artist: "Alan Walker", url: "https://youtu.be/60ItHLz5WEA" },
-  { title: "Mercury", artist: "Sleeping At Last", url: "https://youtu.be/pNUR0fOMpCs" },
-  { title: "The Night We Met", artist: "Lord Huron", url: "https://youtu.be/KtlgYxa6BMU" },
-  { title: "Ghost", artist: "Jacob Lee", url: "https://youtu.be/gxh1EYJVhfQ" },
-  { title: "Night Begins to Shine", artist: "B.E.R", url: "https://youtu.be/lSLXS0bjSCs" },
+  { title: "Lofi Hip Hop Radio", artist: "Lofi Girl", url: "https://www.youtube.com/watch?v=jfKfPfyJRdk" },
+  { title: "Chillhop Radio", artist: "Chillhop Music", url: "https://www.youtube.com/watch?v=5yx6BWlEVcY" },
+  { title: "Chillhop Essentials · Fall", artist: "Chillhop Music", url: "https://www.youtube.com/watch?v=dYuNh58nLt8" },
+  { title: "Synthwave Radio", artist: "Lofi Girl", url: "https://www.youtube.com/watch?v=4xDzrJKXOOY" },
 ];
 
 function ytId(url) {

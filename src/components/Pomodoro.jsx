@@ -308,6 +308,8 @@ export default function Pomodoro({ open = false, onOpenChange = () => {} }) {
           width: "100%",
           height: "100%",
           videoId: id,
+          // Privacy-enhanced mode: YouTube doesn't store cookies until the video plays.
+          host: "https://www.youtube-nocookie.com",
           playerVars: { playsinline: 1, rel: 0 },
           events: {
             onReady: (e) => {

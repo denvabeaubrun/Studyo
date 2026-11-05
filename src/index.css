@@ -319,6 +319,7 @@ body {
 
 .set-card-actions {
   display: flex;
+  flex-wrap: wrap;
   gap: 8px;
 }
 
@@ -451,6 +452,13 @@ body {
   color: #2f6b4a;
   font-size: 13px;
   margin-top: 12px;
+}
+
+.modal-privacy {
+  margin-top: 12px;
+  font-size: 13px;
+  line-height: 1.45;
+  color: #555;
 }
 
 .modal-footer {
@@ -1003,4 +1011,43 @@ body {
   .fog-prompt {
     font-size: 20px;
   }
+}
+
+/* Brain Fog: timer on/off switch */
+.fog-header-right {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+}
+.fog-timer-toggle {
+  padding: 6px 12px;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  color: #1a1a1a;
+  background: white;
+  border: 2px solid #1a1a1a;
+  border-radius: 999px;
+  cursor: pointer;
+}
+.fog-timer-toggle[aria-pressed="false"] {
+  background: #f0f0f0;
+}
+.fog-timer-toggle:focus-visible {
+  outline: 3px solid #d62828;
+  outline-offset: 2px;
+}
+.fog-untimed {
+  margin-bottom: 14px;
+  font-size: 13px;
+  color: #555;
+  text-align: center;
+}
+.fog-note {
+  margin-top: 16px;
+  font-size: 13px;
+  color: #666;
+  text-align: center;
 }

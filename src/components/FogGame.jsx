@@ -6,6 +6,9 @@
 // At the end you see your score, accuracy, best streak, and the cards you missed.
 //
 // Keyboard: press 1, 2, 3 or 4 to pick an answer.
+// The timer can be turned off (the choice is remembered in this browser), for anyone
+// who reads more slowly, uses a screen reader, or finds time pressure stressful.
+// With the timer off there is no speed bonus, so every right answer scores 500.
 // The game does not change which cards are marked mastered.
 //
 // Props:
@@ -21,6 +24,23 @@ import {
 } from '../utils/fogGame';
 
 const OPTION_COLORS = ['#7DD3A0', '#5BC0EB', '#FBBF24', '#F5B3E3'];
+const TIMER_PREF_KEY = 'studyo-fog-timer'; // remembers the timer on/off choice
+
+function loadTimerPref() {
+  try {
+    return localStorage.getItem(TIMER_PREF_KEY) !== 'off';
+  } catch {
+    return true; // storage blocked: default to the timer on
+  }
+}
+
+function saveTimerPref(on) {
+  try {
+    localStorage.setItem(TIMER_PREF_KEY, on ? 'on' : 'off');
+  } catch {
+    // Not saved; the choice still applies for this game.
+  }
+}
 
 // The cloud and sky. The thicker the fog (0 to 100), the bigger and more solid the
 // cloud, and the dimmer the sun. The cloud's face changes with the fog level.
@@ -68,16 +88,21 @@ function FogScene({ fog }) {
 
 // One game. It is remounted (see the key in FogGame) to start a new one.
 function FogRound({ questions, set, color, onExit, onPlayAgain }) {
-  const [game, dispatch] = useReducer(fogReducer, questions, createGame);
+  const [game, dispatch] = useReducer(fogReducer, questions, (qs) => createGame(qs, { timed: loadTimerPref() }));
   const nextRef = useRef(null);
   const { phase } = game;
 
   // Run the clock (a tenth of a second at a time) while a question is open.
   useEffect(() => {
-    if (phase !== 'asking') return undefined;
+    if (phase !== 'asking' || !game.timed) return undefined;
     const id = setInterval(() => dispatch({ type: 'TICK' }), 100);
     return () => clearInterval(id);
-  }, [phase, game.index]);
+  }, [phase, game.index, game.timed]);
+
+  function toggleTimer() {
+    saveTimerPref(!game.timed);
+    dispatch({ type: 'SET_TIMED', timed: !game.timed });
+  }
 
   // Keys 1 to 4 pick an answer.
   useEffect(() => {
@@ -143,7 +168,17 @@ function FogRound({ questions, set, color, onExit, onPlayAgain }) {
     <div className="study-screen fog-game">
       <div className="study-header">
         <button className="back-button" onClick={onExit}>← Back to {set.title}</button>
-        <span className="study-progress-label">Question {game.index + 1}/{total}</span>
+        <div className="fog-header-right">
+          <span className="study-progress-label">Question {game.index + 1}/{total}</span>
+          <button
+            type="button"
+            className="fog-timer-toggle"
+            aria-pressed={game.timed}
+            onClick={toggleTimer}
+          >
+            ⏱ Timer: {game.timed ? 'on' : 'off'}
+          </button>
+        </div>
       </div>
 
       <div className="fog-scene">
@@ -169,13 +204,17 @@ function FogRound({ questions, set, color, onExit, onPlayAgain }) {
         <span className="fog-chip fog-chip--streak">🔥 Streak {game.streak}</span>
       </div>
 
-      <div className="fog-timer">
-        <div
-          className={`fog-timer-fill${game.timeLeft <= TIME_LIMIT * 0.3 ? ' is-low' : ''}`}
-          style={{ width: `${(game.timeLeft / TIME_LIMIT) * 100}%` }}
-        />
-        <span className="fog-timer-label">{secondsLeft}s</span>
-      </div>
+      {game.timed ? (
+        <div className="fog-timer">
+          <div
+            className={`fog-timer-fill${game.timeLeft <= TIME_LIMIT * 0.3 ? ' is-low' : ''}`}
+            style={{ width: `${(game.timeLeft / TIME_LIMIT) * 100}%` }}
+          />
+          <span className="fog-timer-label">{secondsLeft}s</span>
+        </div>
+      ) : (
+        <p className="fog-untimed">No time limit. Each right answer scores 500 points (no speed bonus).</p>
+      )}
 
       <p className="fog-prompt-label">
         {question.direction === 'term' ? 'What does this mean?' : 'Which term fits this?'}
@@ -212,6 +251,9 @@ function FogRound({ questions, set, color, onExit, onPlayAgain }) {
           {game.index + 1 >= total ? 'See results' : 'Next question →'}
         </button>
       )}
+      <p className="fog-note">
+        This game is for practice: it doesn&rsquo;t change which cards are marked mastered.
+      </p>
     </div>
   );
 }

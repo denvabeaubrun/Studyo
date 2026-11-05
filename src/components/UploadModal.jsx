@@ -128,6 +128,11 @@ function UploadModal({ color, onClose, onGenerate, isGenerating }) {
             style={{ display: 'none' }}
           />
 
+          <p className="modal-privacy">
+            🔒 Your notes are turned into cards right here in your browser and are never uploaded.
+            Cards are made by simple text rules, so check them before you study.
+          </p>
+
           {note && !error && <p className="modal-note" role="status">{note}</p>}
           {error && <p className="modal-error" role="alert">{error}</p>}
         </div>

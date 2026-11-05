@@ -225,6 +225,13 @@
   border: 0;
   cursor: pointer;
 }
+.hs-privacy {
+  flex-basis: 100%;
+  max-width: 720px;
+  font-size: 13px;
+  line-height: 1.5;
+  text-align: left;
+}
 .hs-footer-links button:hover {
   color: #1a1a1a;
   text-decoration: underline;

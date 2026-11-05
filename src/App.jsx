@@ -155,6 +155,18 @@ function App() {
     window.scrollTo({ top: 0 });
   }
 
+  // "Download my data" in the footer: saves a copy of everything as a .json file,
+  // so students can keep their work or move it, without needing an account.
+  function handleDownloadData() {
+    const blob = new Blob([JSON.stringify({ app: 'Studyo', subjects }, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `studyo-data-${new Date().toISOString().slice(0, 10)}.json`;
+    link.click();
+    URL.revokeObjectURL(url);
+  }
+
   // Color used for headers and cards: the class color, then subject color, then default blue.
   const accentColor = selectedClass?.color || selectedSubject?.color || '#5BC0EB';
 
@@ -352,7 +364,7 @@ function App() {
 
         {/* Explanation, progress and pod info; the homepage only */}
         {selectedSubject === null && (
-          <HomeSections subjects={subjects} onNavigate={goToSection} onReset={handleResetData} />
+          <HomeSections subjects={subjects} onNavigate={goToSection} onReset={handleResetData} onDownload={handleDownloadData} />
         )}
       </main>
 

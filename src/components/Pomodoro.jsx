@@ -8,24 +8,26 @@ const MODES = {
 };
 const MODE_ORDER = ["focus", "short", "long"];
 
-// Drop audio files in public/music and list them here.
+// Music files in public/music, served from this site: no ads and nothing loads from
+// another service. They play one after another and loop back to the first.
 // BASE_URL keeps paths working on GitHub Pages (/Studyo/).
+// All tracks are from Pixabay (Pixabay Content License: free to use in a project like
+// this, no credit required, but we credit the artists anyway). The artist shows on
+// the pod's screen. Files were re-encoded at 128 kbps to keep the site fast.
 const BASE = import.meta.env.BASE_URL;
-// artist shows on the pod's screen, which also covers credit for licenses that ask for it.
 const TRACKS = [
-  // { title: "Track name", artist: "Artist name", src: `${BASE}music/track-name.mp3` },
+  { title: "Rain Piano", artist: "atlasaudio · Pixabay", src: `${BASE}music/rain-piano.mp3` },
+  { title: "Soft Music", artist: "andriih-soft · Pixabay", src: `${BASE}music/soft-music.mp3` },
+  { title: "Lullaby", artist: "leberch · Pixabay", src: `${BASE}music/lullaby.mp3` },
+  { title: "Inspiring Violin", artist: "delosound · Pixabay", src: `${BASE}music/inspiring-violin.mp3` },
+  { title: "Rain Sounds", artist: "marlowemusic · Pixabay", src: `${BASE}music/rain-sounds.mp3` },
 ];
 
-// Study beats: instrumental lofi, played through YouTube's own player (nothing is
-// downloaded or hosted here). Most are 24/7 livestreams, so the music doesn't stop
-// mid-session. Livestream links change when a stream restarts: if one says
-// "Video unavailable", replace its link with the channel's current stream.
-const YT_SONGS = [
-  { title: "Lofi Hip Hop Radio", artist: "Lofi Girl", url: "https://www.youtube.com/watch?v=jfKfPfyJRdk" },
-  { title: "Chillhop Radio", artist: "Chillhop Music", url: "https://www.youtube.com/watch?v=5yx6BWlEVcY" },
-  { title: "Chillhop Essentials · Fall", artist: "Chillhop Music", url: "https://www.youtube.com/watch?v=dYuNh58nLt8" },
-  { title: "Synthwave Radio", artist: "Lofi Girl", url: "https://www.youtube.com/watch?v=4xDzrJKXOOY" },
-];
+// YouTube songs. Empty for now: YouTube embeds can show ads, so the timer uses the
+// music files above instead. To add one back:
+//   { title: "Song name", artist: "Artist", url: "https://www.youtube.com/watch?v=..." },
+// Only use videos from the artist's official channel.
+const YT_SONGS = [];
 
 function ytId(url) {
   const m = (url || "").match(/(?:v=|youtu\.be\/|embed\/|shorts\/)([\w-]{11})/);

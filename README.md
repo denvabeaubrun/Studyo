@@ -27,6 +27,9 @@
 * ⏱️ **Pomodoro Timer**
   Focus (25 min), short break (5 min), and long break (15 min) modes, with a built-in music player (ad-free piano, violin and rain tracks, plus rain and brown noise).
 
+* 🌙 **Dark Mode**
+  A sun/moon switch in the top bar. It follows your device's light or dark setting until you pick one, then remembers your choice.
+
 * 📈 **Mastery Tracking**
   Mark cards "Got it" or "Still learning" and see a mastery progress bar for each set.
 
@@ -209,13 +212,15 @@ src/
 ├── data/
 │   └── defaultSubjects.js    # Starting subjects, classes, and sample sets
 ├── hooks/
-│   └── usePersistentSubjects.js  # Loads and saves data in the browser
+│   ├── usePersistentSubjects.js  # Loads and saves data in the browser
+│   └── useTheme.js           # Light/dark mode switch
 ├── utils/
 │   ├── generateCards.js      # Notes → flashcards logic
 │   ├── fogGame.js            # Brain Fog rules (questions, scoring, game state)
 │   ├── matchGame.js          # Match game rules (build a round, check a pair)
 │   ├── readPdf.js            # PDF text extraction
 │   └── storage.js            # Saves/loads data in local storage
+├── theme.css                 # Light and dark mode colors
 ├── App.jsx                   # Main app: subjects, classes, sets, navigation
 ├── Layout.css
 └── index.css

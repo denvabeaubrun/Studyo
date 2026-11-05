@@ -1,0 +1,86 @@
+/* theme.css
+ *
+ * Colors for light and dark mode. Styles use these variables instead of fixed
+ * colors, so switching the theme only swaps the values here.
+ *
+ * The theme is chosen by the data-theme attribute on <html> ("light" or "dark").
+ * A small script in index.html sets it before the page draws (no white flash), and
+ * hooks/useTheme.js changes it when the switch in the top bar is used. With no saved
+ * choice, it follows the device's light/dark setting.
+ *
+ * Colored things (subject cards, answer buttons, the timer pod) keep their colors in
+ * both themes; their text uses --ink-on-color so it stays dark and readable.
+ */
+
+:root {
+  color-scheme: light;
+  --page-bg: #EAF6FC;
+  --nav-bg: rgba(234, 246, 252, 0.82);
+  --surface: #ffffff;        /* cards, buttons, inputs */
+  --surface-warm: #FFF8F0;   /* set cards, question cards */
+  --hover: #f5f5f5;
+  --track: #e5e5e5;          /* empty part of progress bars */
+  --ink: #1a1a1a;            /* main text */
+  --muted: #555;             /* secondary text */
+  --faint: #888;             /* hints */
+  --line: #1a1a1a;           /* outlines and hard shadows */
+  --rule: rgba(26, 26, 26, 0.12); /* thin divider lines */
+  --ink-on-color: #1a1a1a;   /* text on colored fills, same in both themes */
+  --solid: #1a1a1a;          /* solid dark buttons */
+  --on-solid: #ffffff;
+  --accent: #d62828;         /* red marker, focus rings */
+  --warn-bg: #ffe9e9;
+  --warn-ink: #7a1616;
+  --warn-line: #bf2222;
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --page-bg: #141821;
+  --nav-bg: rgba(20, 24, 33, 0.85);
+  --surface: #222833;
+  --surface-warm: #2a2a33;
+  --hover: #2c3440;
+  --track: #3a4250;
+  --ink: #f2f4f7;
+  --muted: #b3bcc8;
+  --faint: #8a94a3;
+  --line: #000000;
+  --rule: rgba(255, 255, 255, 0.12);
+  --solid: #f2f4f7;
+  --on-solid: #141821;
+  --accent: #ff5a5a;
+  --warn-bg: #3a1f22;
+  --warn-ink: #ffb3b3;
+  --warn-line: #ff6b6b;
+}
+
+body {
+  transition: background-color 0.25s, color 0.25s;
+}
+@media (prefers-reduced-motion: reduce) {
+  body {
+    transition: none;
+  }
+}
+
+/* Dark mode: black outlines need a little lift to show on the dark page, so cards
+   and buttons get a faint light edge as well. */
+:root[data-theme="dark"] .subject-card,
+:root[data-theme="dark"] .set-card,
+:root[data-theme="dark"] .class-banner,
+:root[data-theme="dark"] .quiz-question-card,
+:root[data-theme="dark"] .flashcard,
+:root[data-theme="dark"] .modal {
+  outline: 1px solid rgba(255, 255, 255, 0.14);
+  outline-offset: 0;
+}
+
+/* Brain Fog's sky scene is a picture, so its meters stay light in both themes. */
+.fog-meter-track,
+:root[data-theme="dark"] .fog-timer {
+  background: #eef2f5;
+}
+.fog-option-num {
+  background: #ffffff;
+}

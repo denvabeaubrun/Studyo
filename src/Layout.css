@@ -29,7 +29,15 @@
 .subjects-hint {
   margin: -4px 0 18px;
   font-size: 16px;
-  color: #555;
+  color: var(--muted);
+}
+
+/* Card text stays dark on the bright card colors, in light and dark mode */
+.subject-card {
+  color: var(--ink-on-color);
+}
+.subject-card.new-subject-tile {
+  color: var(--ink);
 }
 
 /* Deck counts and readable text on dark cards */
@@ -100,7 +108,7 @@
 }
 .marker-circle path {
   fill: none;
-  stroke: #d62828;
+  stroke: var(--accent);
   stroke-width: 4.5;
   stroke-linecap: round;
   stroke-linejoin: round;

@@ -1,13 +1,13 @@
 /* Top bar: flat, same blue as the page, so it blends in. */
 .header {
-  background: rgba(234, 246, 252, 0.82);
+  background: var(--nav-bg);
   -webkit-backdrop-filter: blur(10px);
   backdrop-filter: blur(10px);
   border-bottom: 1px solid transparent;
   transition: border-color 0.2s;
 }
 .header.is-scrolled {
-  border-bottom-color: rgba(26, 26, 26, 0.12);
+  border-bottom-color: var(--rule);
 }
 
 .snav {
@@ -25,7 +25,7 @@
   font: inherit;
   font-size: 22px;
   font-weight: 800;
-  color: #1a1a1a;
+  color: var(--ink);
   white-space: nowrap;
   background: none;
   border: 0;
@@ -48,7 +48,7 @@
   font: inherit;
   font-size: 15px;
   font-weight: 700;
-  color: #555;
+  color: var(--muted);
   white-space: nowrap;
   background: none;
   border: 0;
@@ -61,16 +61,38 @@
 }
 .snav-link:hover,
 .snav-timer:hover {
-  color: #1a1a1a;
+  color: var(--ink);
 }
 .snav-link.is-active {
-  color: #1a1a1a;
-  text-decoration-color: #d62828;
+  color: var(--ink);
+  text-decoration-color: var(--accent);
 }
 .snav-timer {
   display: flex;
   align-items: center;
   gap: 8px;
+}
+.snav-theme {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 38px;
+  height: 38px;
+  font-size: 18px;
+  line-height: 1;
+  background: var(--surface);
+  border: 2px solid var(--line);
+  border-radius: 50%;
+  box-shadow: 2px 2px 0 var(--line);
+  cursor: pointer;
+  transition: transform 0.1s;
+}
+.snav-theme:hover {
+  transform: translate(-1px, -1px);
+}
+.snav-theme:active {
+  transform: translate(1px, 1px);
+  box-shadow: none;
 }
 .snav-dot {
   width: 9px;
@@ -79,7 +101,7 @@
   background: #7dd3a0;
 }
 .snav button:focus-visible {
-  outline: 3px solid #d62828;
+  outline: 3px solid var(--accent);
   outline-offset: 2px;
 }
 

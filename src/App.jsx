@@ -7,6 +7,7 @@ import UploadModal from './components/UploadModal';
 import FlashcardViewer from './components/FlashcardViewer';
 import QuizView from './components/QuizView';
 import MatchGame from './components/MatchGame';
+import FogGame from './components/FogGame';
 import SiteNav from './components/SiteNav';
 import HomeSections from './components/HomeSections';
 import { generateCards } from './utils/generateCards';
@@ -33,7 +34,8 @@ const setCount = (n) => `${n} ${n === 1 ? 'set' : 'sets'}`;
 // The Pomodoro timer stays visible on every screen.
 // On the subjects screen the page continues below the grid with HomeSections
 // (how it works, progress, the pod). SiteNav is the top bar.
-// Each study set has three ways to study: Flashcards, Quiz and Match (a pairing game).
+// Each study set has four ways to study: Flashcards, Quiz, Match (a pairing game) and
+// Brain Fog (a timed quiz game).
 //
 // Data is saved in this browser's local storage, so it survives a refresh. It stays
 // on this device and browser; there are no accounts or syncing yet.
@@ -47,7 +49,7 @@ function App() {
   const [selectedSubjectId, setSelectedSubjectId] = useState(null);
   const [selectedClassId, setSelectedClassId] = useState(null);
   const [activeSetId, setActiveSetId] = useState(null);
-  const [activeMode, setActiveMode] = useState(null); // 'flashcards' | 'quiz' | 'match' | null
+  const [activeMode, setActiveMode] = useState(null); // 'flashcards' | 'quiz' | 'match' | 'fog' | null
   const [showUploadModal, setShowUploadModal] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
   const [podOpen, setPodOpen] = useState(false); // full-screen timer on phones
@@ -251,6 +253,8 @@ function App() {
               <QuizView set={activeSet} color={accentColor} onExit={goToSets} />
             ) : activeSet && activeMode === 'match' ? (
               <MatchGame set={activeSet} color={accentColor} onExit={goToSets} />
+            ) : activeSet && activeMode === 'fog' ? (
+              <FogGame set={activeSet} color={accentColor} onExit={goToSets} />
             ) : (
               <>
                 <div className="subjects-header">
@@ -323,6 +327,12 @@ function App() {
                               onClick={() => { setActiveSetId(set.id); setActiveMode('match'); }}
                             >
                               Match
+                            </button>
+                            <button
+                              className="set-action-button"
+                              onClick={() => { setActiveSetId(set.id); setActiveMode('fog'); }}
+                            >
+                              Brain Fog
                             </button>
                           </div>
                         </div>

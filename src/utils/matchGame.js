@@ -6,8 +6,7 @@
 // a "term" tile (the card front) and a "definition" tile (the card back). The
 // player pairs each term with its definition.
 //
-// Cards that would make a confusing round are skipped: two cards with the same
-// front or the same back could be paired in more than one way.
+// Cards that would make a confusing round are skipped (see pickDistinctCards).
 
 export const ROUND_SIZE = 6;  // pairs per round (a smaller set uses all of its cards)
 export const MIN_PAIRS = 2;   // a round needs at least this many different cards
@@ -22,13 +21,10 @@ export function shuffle(items) {
   return a;
 }
 
-// Builds a round from a set's cards.
-// Returns { pairs, terms, definitions }:
-//   pairs        how many cards are in the round
-//   terms        term tiles, in random order:       { id, cardId, side: 'term', text }
-//   definitions  definition tiles, in random order: { id, cardId, side: 'definition', text }
-// Returns null if the set doesn't have enough different cards (see MIN_PAIRS).
-export function buildRound(cards, size = ROUND_SIZE) {
+// Picks up to "size" cards in random order, skipping cards that would be confusing:
+// two cards with the same front or the same back could be paired in more than one
+// way. Shared by Match and Brain Fog.
+export function pickDistinctCards(cards, size) {
   const seenFronts = new Set();
   const seenBacks = new Set();
   const picked = [];
@@ -42,7 +38,17 @@ export function buildRound(cards, size = ROUND_SIZE) {
     picked.push(card);
     if (picked.length === size) break;
   }
+  return picked;
+}
 
+// Builds a round from a set's cards.
+// Returns { pairs, terms, definitions }:
+//   pairs        how many cards are in the round
+//   terms        term tiles, in random order:       { id, cardId, side: 'term', text }
+//   definitions  definition tiles, in random order: { id, cardId, side: 'definition', text }
+// Returns null if the set doesn't have enough different cards (see MIN_PAIRS).
+export function buildRound(cards, size = ROUND_SIZE) {
+  const picked = pickDistinctCards(cards, size);
   if (picked.length < MIN_PAIRS) return null;
 
   const tile = (card, side) => ({

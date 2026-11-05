@@ -21,6 +21,9 @@
 * 🎮 **Match Game**
   Pair each term with its definition against the clock. Each round uses up to 6 cards from a set, and shows your time and mistakes at the end.
 
+* 🌫️ **Brain Fog Game**
+  A timed quiz game. Answer before the 15-second timer runs out: faster answers and streaks score more points, and right answers clear a fog cloud. Wrong or late answers let the fog creep back. At the end you see your score, accuracy, best streak, and the cards you missed. Press 1 to 4 to answer.
+
 * ⏱️ **Pomodoro Timer**
   Focus (25 min), short break (5 min), and long break (15 min) modes, with a built-in music player.
 
@@ -33,7 +36,7 @@
 2. **Add your study notes**
 3. **Generate a study set**
 4. **Study with flashcards**
-5. **Test yourself with a quiz, or play Match**
+5. **Test yourself with a quiz, or play Match or Brain Fog**
 6. **Track your progress**
 
 ### Example
@@ -75,6 +78,7 @@ Studyo is for students who keep notes in messy formats (typed notes, copied text
 | R10 | Keep my work between visits | Saving in the browser (`storage.js`) | Any change -> still there after a refresh; "Reset saved data" returns to the samples | Automated tests + manual |
 | R11 | Use it without installing anything | GitHub Pages deploy | Merge to `main` -> live site updates | GitHub Actions run is green |
 | R12 | Practice without it feeling repetitive | Match game (`MatchGame.jsx`, `matchGame.js`) | A set with 2 or more different cards -> timed pairing of terms and definitions, with time and mistakes shown | Automated tests + manual |
+| R13 | Practice under pressure, with quick feedback | Brain Fog game (`FogGame.jsx`, `fogGame.js`) | A set with 2 or more different cards -> up to 10 timed questions, points for speed and streaks, a score, and a list of missed cards | Automated tests + manual |
 
 ### Measurable targets
 
@@ -84,7 +88,8 @@ Studyo is for students who keep notes in messy formats (typed notes, copied text
 * **M4.** Mastery % always equals cards marked "Got it" divided by total cards, shown overall and per subject.
 * **M5.** After a refresh, subjects, sets, and mastered cards are exactly as they were. Saved data that is damaged or out of date never crashes the app; it falls back to the sample data. Checked by automated tests and in a browser.
 * **M6.** In Match, every card in a round appears once as a term and once as a definition, no two cards share the same front or back, and a round can be completed by pairing every tile. Checked by automated tests and in a browser.
-* **M7.** All automated tests (53 now) pass and the build succeeds before a pull request is merged.
+* **M7.** In Brain Fog, every question has the right answer exactly once among its options, a right answer scores 500 to 1000 points plus a streak bonus, a wrong or late answer scores 0, and fog cleared never goes below 0% or above 100%. Checked by automated tests and in a browser.
+* **M8.** All automated tests (79 now) pass and the build succeeds before a pull request is merged.
 
 ### Use cases
 
@@ -129,6 +134,7 @@ src/
 │   ├── FlashcardViewer.jsx   # Flip through cards, mark mastery
 │   ├── QuizView.jsx          # Multiple-choice quiz
 │   ├── MatchGame.jsx         # Match game: pair terms with definitions
+│   ├── FogGame.jsx           # Brain Fog game: timed quiz with a fog cloud
 │   ├── Pomodoro.jsx          # Study timer + music player
 │   ├── Stars.jsx             # Decorative star field (homepage)
 │   └── Critters.jsx          # Decorative animated characters
@@ -138,6 +144,7 @@ src/
 │   └── usePersistentSubjects.js  # Loads and saves data in the browser
 ├── utils/
 │   ├── generateCards.js      # Notes → flashcards logic
+│   ├── fogGame.js            # Brain Fog rules (questions, scoring, game state)
 │   ├── matchGame.js          # Match game rules (build a round, check a pair)
 │   ├── readPdf.js            # PDF text extraction
 │   └── storage.js            # Saves/loads data in local storage
@@ -165,6 +172,9 @@ Displays study cards one at a time and allows students to mark cards as either "
 
 **`components/MatchGame.jsx` and `utils/matchGame.js`**
 The Match game. `matchGame.js` builds a round (up to 6 cards, skipping cards that share a front or back) and checks pairs; `MatchGame.jsx` is the screen with the timer, mistake count, and results. It doesn't change which cards are marked mastered.
+
+**`components/FogGame.jsx` and `utils/fogGame.js`**
+The Brain Fog game. `fogGame.js` builds the questions, scores answers (500 to 1000 points by speed, plus a streak bonus), tracks the fog level, and runs the whole game as a reducer so it can be tested without a screen. `FogGame.jsx` is the screen: the cloud, timer, answer buttons, and results. It doesn't change which cards are marked mastered.
 
 **`components/QuizView.jsx`**
 Creates multiple-choice quizzes from study sets, including randomized answer choices and score tracking.
@@ -229,7 +239,7 @@ Every push to `main` automatically builds the app and deploys it to GitHub Pages
 
 Studyo is an ongoing project developed for **CISC 4900**.
 
-**Working now:** subject/class organization, notes upload (`.txt`/`.md`/`.pdf` or pasted text), messy-notes cleanup, automatic flashcard generation, flashcard study mode with mastery tracking, the Match game, saved progress between visits, quiz mode, Pomodoro timer, and GitHub Pages deployment.
+**Working now:** subject/class organization, notes upload (`.txt`/`.md`/`.pdf` or pasted text), messy-notes cleanup, automatic flashcard generation, flashcard study mode with mastery tracking, the Match and Brain Fog games, saved progress between visits, quiz mode, Pomodoro timer, and GitHub Pages deployment.
 
 **Known limitations:**
 

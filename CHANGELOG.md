@@ -5,6 +5,8 @@ All notable changes to Studyo are listed here, newest first.
 ## [Unreleased]
 
 ### Added
+- Brain Fog game, a fourth way to study. A timed quiz (15 seconds per question, up to 10 questions) where right answers clear a fog cloud. Faster answers and streaks score more points; missed cards are listed at the end with their answers. Keys 1 to 4 pick an answer. Questions go both ways (term to definition and definition to term).
+- 26 new tests for the Brain Fog rules (`fogGame.test.js`).
 - Match game, a third way to study next to Flashcards and Quiz. Pair terms with definitions against a timer; up to 6 cards per round, with time and mistakes shown at the end and a "Play again" button. It replaces the disabled "Game" button. Works with keyboard and screen readers, and respects reduced-motion settings.
 - 13 new tests for the Match rules (`matchGame.test.js`).
 - Saved progress. Subjects, sets, and mastered cards are saved in the browser (local storage) and are still there after a refresh. Saved data is checked on load and falls back to the sample data if it is damaged. If saving fails (storage full or blocked), a warning is shown. A "Reset saved data" button in the footer clears it.
@@ -20,6 +22,7 @@ All notable changes to Studyo are listed here, newest first.
 - One-line tip under "My subjects".
 
 ### Changed
+- Match and Brain Fog share one helper for picking cards without confusing duplicates (`pickDistinctCards`).
 - The starting data moved from `App.jsx` into `data/defaultSubjects.js`.
 - The deploy workflow uses Node 22 (required by the PDF library, `pdfjs-dist`).
 - The header is now a flat bar that blends into the page, replacing the plain logo header.

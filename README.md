@@ -4,6 +4,12 @@
 
 🔗 **Live Demo:** https://denvabeaubrun.github.io/Studyo/
 
+| Light mode | Dark mode |
+| --- | --- |
+| ![Studyo homepage in light mode, with subject cards and the Pomodoro timer](docs/screenshots/home-light.png) | ![Studyo homepage in dark mode](docs/screenshots/home-dark.png) |
+
+![Brain Fog game: a right answer clears 25% of the fog cloud, with points, a streak and the 15-second timer](docs/screenshots/brain-fog.png)
+
 ## Features
 
 * 📚 **Subject & Class Organization**
@@ -13,7 +19,7 @@
   Paste notes or upload `.txt`, `.md` or `.pdf` files.
 
 * 🧠 **Automatic Flashcards**
-  Turns notes into flashcards by detecting formats like `Term: definition`, `Term - definition`, and term/definition line pairs. Falls back to fill-in-the-blank cards from longer sentences.
+  Turns notes into flashcards by detecting formats like `Term: definition`, `Term - definition`, `Q:`/`A:` pairs, and term/definition line pairs. Notes written as ongoing sentences become real questions: "the revolution was during 1775 to 1783 and it started because of taxes" becomes "When was the revolution?" and "Why did the revolution start?". It understands when, why, what caused, what led to, who, and where, and reads "it" or "they" as the subject of the sentence before. Other sentences with a date, number, or name become fill-in-the-blank cards that hide that key fact.
 
 * ❓ **Quiz Mode**
   Multiple-choice quizzes built from a study set, with randomized answer choices and a score.
@@ -51,6 +57,15 @@ Mitochondria: The powerhouse of the cell
 Ribosome - Builds proteins from amino acids
 ```
 
+Notes written as sentences work too:
+
+```text
+the american revolution was during 1775 to 1783 and it started because of taxes
+The Declaration of Independence was written by Thomas Jefferson.
+```
+
+becomes "When was the american revolution?", "Why did the american revolution start?", and "Who wrote the Declaration of Independence?".
+
 Studyo turns each line into a flashcard (front: the term, back: the definition). The student can then flip through the cards, mark which ones they've mastered, take a multiple-choice quiz, and use the Pomodoro timer to stay focused.
 
 ## Requirements
@@ -84,6 +99,7 @@ Studyo is for students who keep notes in messy formats (typed notes, copied text
 | R13 | Practice under pressure, with quick feedback | Brain Fog game (`FogGame.jsx`, `fogGame.js`) | A set with 2 or more different cards -> up to 10 timed questions, points for speed and streaks, a score, and a list of missed cards | Automated tests + manual |
 | R14 | Keep control of my own data | Privacy notice, "Download my data", "Reset saved data" | Click -> a `.json` copy of all data, or all saved data erased after a confirmation | Manual |
 | R15 | Practice without time pressure | Brain Fog timer on/off switch | Timer off -> no time limit and no speed bonus (500 points per right answer); the choice is remembered | Automated tests + manual |
+| R16 | Use notes written as sentences | Sentence reader (`noteFacts.js`) | Ongoing notes like "X was during 1775 ... and it started because of Y" -> when / why / what caused / what led to / who / where questions, and key-fact blanks | Automated tests |
 
 ### Measurable targets
 
@@ -95,14 +111,16 @@ Studyo is for students who keep notes in messy formats (typed notes, copied text
 * **M6.** In Match, every card in a round appears once as a term and once as a definition, no two cards share the same front or back, and a round can be completed by pairing every tile. Checked by automated tests and in a browser.
 * **M7.** In Brain Fog, every question has the right answer exactly once among its options, a right answer scores 500 to 1000 points plus a streak bonus, a wrong or late answer scores 0, and fog cleared never goes below 0% or above 100%. Checked by automated tests and in a browser.
 * **M8.** With the Brain Fog timer off, a question never times out and a right answer scores exactly 500 points plus the streak bonus, never more than with the timer on. Checked by automated tests.
-* **M9.** All automated tests (85 now) pass and the build succeeds before a pull request is merged.
+* **M9.** Each sentence that states a time, cause, effect, author, or place in a supported pattern becomes one question card with the right answer on the back, and "it"/"they" refer to the subject of the sentence before. Sentences with no clear fact and no date, number, or name make no card. Checked by automated tests.
+* **M10.** All automated tests (100 now) pass and the build succeeds before a pull request is merged.
 
 ### Use cases
 
 1. **Quick study set (expected input):** a student pastes "Term: definition" lines for a biology unit and gets one card per line.
 2. **Messy PDF (expected input):** a student uploads a PDF with page numbers, a header on every page, and words split across lines. The text is cleaned, shown for editing, and turned into cards.
 3. **Study session:** a student runs a 25-minute Pomodoro, flips cards, marks the ones they know, and sees the progress percentage go up.
-4. **Bad upload (unexpected input):** a student uploads a scan of a page. Studyo explains that no text was found and asks for a text-based PDF or pasted text instead of making empty cards.
+4. **Notes written as sentences (expected input):** a student types quick notes in class, all lowercase with no periods ("world war 1 started in 1914 / it was caused by ..."). Each line becomes a question: "When did world war 1 start?", "What caused world war 1?".
+5. **Bad upload (unexpected input):** a student uploads a scan of a page. Studyo explains that no text was found and asks for a text-based PDF or pasted text instead of making empty cards.
 
 ### Assumptions and constraints
 
@@ -153,7 +171,7 @@ Studyo is for students who keep notes in messy formats (typed notes, copied text
 
 ### Bias and limitations
 
-* **Card generation is rule-based** and tuned to English-style notes ("Term: definition", "Q: / A:", "X is ..."). Notes in other languages, math with symbols, diagrams, and very informal notes can produce missing or wrong cards. The upload box tells students to check their cards.
+* **Card generation is rule-based** and tuned to English-style notes ("Term: definition", "Q: / A:", "X is ...", and sentences like "X was during ..." or "X started because ..."). Notes in other languages, math with symbols, diagrams, and very informal notes can produce missing or wrong cards. A sentence that doesn't fit a pattern and has no date, number, or name is skipped rather than turned into a bad card, so some notes may not become cards. The upload box tells students to check their cards.
 * **Wrong answer choices** in Quiz and Brain Fog come from other cards in the same set, so a small set gives fewer, easier choices, and similar cards can make a question confusingly hard.
 * **Mastery is self-reported.** A student can mark "Got it" too early; the tracker shows what they marked, not what they know.
 * **Timers favor fast readers.** That's why the Brain Fog timer can be turned off, and Match only measures time without a limit.
@@ -163,7 +181,7 @@ Studyo is for students who keep notes in messy formats (typed notes, copied text
 ### Protecting vulnerable users
 
 * **Younger students:** no sign-up, no personal information, no chat or sharing features, and no ads.
-* **Disabilities:** the games work with the keyboard (keys 1-4 in Brain Fog, Tab and Enter in Match), have screen-reader labels and spoken status updates, and respect the device's reduced-motion setting.
+* **Disabilities:** the games work with the keyboard (keys 1-4 in Brain Fog, Tab and Enter in Match), have screen-reader labels and spoken status updates, and respect the device's reduced-motion setting. Dark mode follows the device setting. **Still missing:** the Flashcards and Quiz screens don't have screen-reader labels yet; that is the next accessibility fix.
 * **Test anxiety:** the Brain Fog timer can be turned off, every game starts fresh, and a low score leads to a review list, not a punishment.
 * **Shared computers:** the footer reminds students to use "Reset saved data" when done.
 
@@ -207,6 +225,8 @@ src/
 │   ├── MatchGame.jsx         # Match game: pair terms with definitions
 │   ├── FogGame.jsx           # Brain Fog game: timed quiz with a fog cloud
 │   ├── Pomodoro.jsx          # Study timer + music player (tracks in public/music)
+│   ├── SiteNav.jsx           # Top bar with section links and the dark mode switch
+│   ├── HomeSections.jsx      # Homepage sections and the footer
 │   ├── Stars.jsx             # Decorative star field (homepage)
 │   └── Critters.jsx          # Decorative animated characters
 ├── data/
@@ -216,6 +236,7 @@ src/
 │   └── useTheme.js           # Light/dark mode switch
 ├── utils/
 │   ├── generateCards.js      # Notes → flashcards logic
+│   ├── noteFacts.js          # Sentences → when/why/who/where questions
 │   ├── fogGame.js            # Brain Fog rules (questions, scoring, game state)
 │   ├── matchGame.js          # Match game rules (build a round, check a pair)
 │   ├── readPdf.js            # PDF text extraction
@@ -232,7 +253,7 @@ src/
 Acts as the central hub of the application and manages the flow between subjects, classes, study sets, flashcards, and quizzes.
 
 **`utils/generateCards.js`**
-Processes study notes and generates flashcards using text-pattern rules. It recognizes common note formats (colons, dashes, arrows, equals signs, tabs, and term/definition line pairs) and removes duplicate terms.
+Processes study notes and generates flashcards using text-pattern rules. It recognizes common note formats (colons, dashes, arrows, equals signs, tabs, and term/definition line pairs) and removes duplicate terms. Lines written as sentences go to `utils/noteFacts.js`, which turns them into when / why / what caused / what led to / who / where questions, follows "it" and "they" back to the sentence before, and otherwise blanks out a date, number, or name.
 
 **`utils/storage.js` and `hooks/usePersistentSubjects.js`**
 Save all subjects, sets, and mastered cards in the browser's local storage after every change, and load them on startup. Saved data is checked first; if it is missing, damaged, or from a different version, the app falls back to the sample data in `data/defaultSubjects.js`. A "Reset saved data" button in the footer clears it.
@@ -252,8 +273,14 @@ The Brain Fog game. `fogGame.js` builds the questions, scores answers (500 to 10
 **`components/QuizView.jsx`**
 Creates multiple-choice quizzes from study sets, including randomized answer choices and score tracking.
 
+**`components/SiteNav.jsx` and `hooks/useTheme.js`**
+The top bar: section links and the sun/moon switch. `useTheme.js` follows the device's light/dark setting until a choice is made, then remembers it; the colors are in `theme.css`.
+
+**`components/HomeSections.jsx`**
+The homepage sections below the subjects (how it works, progress, the timer intro) and the footer with the privacy notice, "Download my data" and "Reset saved data".
+
 **`components/Pomodoro.jsx`**
-A study timer with focus and break modes, plus a music player for focused sessions.
+A study timer with focus and break modes, plus a music player: five ad-free tracks from Pixabay in `public/music` (artists credited on screen), and rain and brown noise generated in the browser.
 
 ## Development
 
@@ -312,15 +339,23 @@ Every push to `main` automatically builds the app and deploys it to GitHub Pages
 
 Studyo is an ongoing project developed for **CISC 4900**.
 
-**Working now:** subject/class organization, notes upload (`.txt`/`.md`/`.pdf` or pasted text), messy-notes cleanup, automatic flashcard generation, flashcard study mode with mastery tracking, the Match and Brain Fog games, saved progress between visits, quiz mode, Pomodoro timer, and GitHub Pages deployment.
+**Working now:** subject/class organization, notes upload (`.txt`/`.md`/`.pdf` or pasted text), messy-notes cleanup, automatic flashcard generation (including notes written as sentences), flashcard study mode with mastery tracking, quiz mode, the Match and Brain Fog games (with a timer on/off switch), saved progress between visits, "Download my data" and "Reset saved data", a privacy notice, dark mode, the Pomodoro timer with ad-free licensed music, and GitHub Pages deployment.
 
 **Known limitations:**
 
 * Flashcards are generated with text-pattern rules, not AI yet.
 * PDF upload only works for PDFs that contain real text. Scanned PDFs (pictures of pages) and password-protected PDFs can't be read, and only the first 150 pages of a PDF are used. PDFs with two columns can come out in a jumbled order, so check the text before generating.
 * Data is saved in your browser only. It doesn't sync between devices, clearing site data erases it, and very large sets can fill the browser's storage (the app shows a warning if saving fails).
+* Cards and sets can't be edited or deleted yet, so a card the generator got wrong stays in the set. Students are told to check their cards, but can't fix them in the app.
+* "Download my data" saves a file, but there is no "Import" yet to load that file back in.
+* The "New subject" tile doesn't do anything yet.
+* The Flashcards and Quiz screens don't have screen-reader labels yet (the games and timer do).
 
 ## Future Development
+
+* Editing and deleting cards and sets, and a review step after upload to check new cards before saving
+* "Import my data" to load a downloaded file back in
+* Screen-reader labels on the Flashcards and Quiz screens
 
 * AI-powered flashcard and quiz generation (Claude API via a secure server-side proxy)
 * Reading scanned PDFs and images (OCR)

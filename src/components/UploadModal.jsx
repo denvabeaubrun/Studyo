@@ -106,7 +106,7 @@ function UploadModal({ color, onClose, onGenerate, isGenerating }) {
           <textarea
             id="notes-text"
             className="modal-textarea"
-            placeholder={'Paste your notes here. Studyo understands:\n"Mitochondria: the powerhouse of the cell"\n"Q: ... / A: ..." pairs, questions with answers below them,\nor full sentences you want turned into study questions.\nMessy notes are fine.'}
+            placeholder={'Paste your notes here. Studyo understands:\n"Mitochondria: the powerhouse of the cell"\n"Q: ... / A: ..." pairs, questions with answers below them,\nor notes written as sentences, like\n"the revolution was during 1775 to 1783 and it started because of taxes"\n(becomes "When was the revolution?" and "Why did the revolution start?").\nMessy notes are fine.'}
             value={text}
             onChange={e => setText(e.target.value)}
             rows={8}

@@ -5,6 +5,9 @@ All notable changes to Studyo are listed here, newest first.
 ## [Unreleased]
 
 ### Added
+- README screenshots of the homepage in light and dark mode and of the Brain Fog game (`docs/screenshots`).
+- Notes written as ongoing sentences now become real questions (`noteFacts.js`). "the revolution was during 1775 to 1783 and it started because of taxes" becomes "When was the revolution?" and "Why did the revolution start?". Understands when, why, what caused, what led to, who, where, and "X is a ..." sentences, in past and present tense; "it"/"they" refer to the sentence before. Other sentences with a date, number, or name become fill-in-the-blank cards that hide that key fact instead of a random word.
+- 15 new tests for sentence notes (`noteFacts.test.js`).
 - Dark mode, with a sun/moon switch in the top bar. It follows the device's setting until a choice is made, then remembers it in the browser. The saved theme is applied before the page draws, so there is no white flash. Colors now come from shared variables in `theme.css`; bright cards and answer buttons keep dark text in both themes.
 - Five ad-free music tracks for the timer (Rain Piano, Soft Music, Lullaby, Inspiring Violin, Rain Sounds) from Pixabay, served from `public/music` with the artists credited on the pod's screen.
 - Brain Fog timer on/off switch, remembered in the browser, for students who read more slowly, use a screen reader, or find time pressure stressful. With the timer off there is no speed bonus (500 points per right answer), so the score stays fair.
@@ -29,6 +32,8 @@ All notable changes to Studyo are listed here, newest first.
 - One-line tip under "My subjects".
 
 ### Changed
+- README brought up to date: "Working now" lists dark mode, the privacy notice, data download, ad-free music and sentence notes; "Known limitations" now names the missing card editing, import, the unused "New subject" tile, and the missing screen-reader labels on Flashcards and Quiz; the top bar, homepage sections and music are described.
+- Quick typed notes (lowercase lines with no periods) are no longer joined together as if they were wrapped PDF lines, and a short note like "the war ended in 1918" is no longer mistaken for a term heading.
 - The timer no longer lists YouTube songs, because YouTube embeds can show ads. The privacy notice and README now say nothing loads from outside services.
 - The timer's YouTube songs are now instrumental study beats (Lofi Girl and Chillhop streams) instead of songs with vocals, which are less distracting while reading.
 - YouTube songs in the timer use YouTube's privacy-enhanced mode (`youtube-nocookie.com`).

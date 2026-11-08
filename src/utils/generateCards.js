@@ -10,8 +10,13 @@
 //   Q: question               A: answer      (also "Question:" / "Answer:")
 //   Why is the sky blue?      (a question line, then its answer on the next line)
 //   Mitochondria are the organelles that make ATP.   (becomes Mitochondria -> the organelles...)
+//   the revolution was during 1775 to 1783 and it started because of taxes
+//                             (ongoing notes: becomes "When was the revolution?" and
+//                              "Why did the revolution start?"; see noteFacts.js)
 // Bullets, numbering and **bold** markers are ignored.
-// If very few cards are found, long sentences become fill-in-the-blank cards.
+// Sentences with a date, number or name and no other pattern become fill-in-the-blank
+// cards that hide that key fact. If very few cards are found, other long sentences
+// become fill-in-the-blank cards too.
 //
 // Messy text is cleaned first (see cleanNotes): text copied out of a PDF often
 // has lines broken in the middle of a sentence, words split with a hyphen at
@@ -19,6 +24,8 @@
 //
 // TODO (real AI generation): replace the body with a call to your serverless
 // proxy that holds the Anthropic API key. Never put the key in client code.
+
+import { splitSentences, factFromSentence, blankKeyFact } from './noteFacts';
 
 const BULLET = /^\s*(?:[-*•▪◦●‣]|\d{1,3}[.)])\s+/;
 const SEPARATORS = [
@@ -104,8 +111,19 @@ function dropPageNoise(pages) {
 // Fixes how lines are broken up so each note sits on one line:
 //   "photo-" + "synthesis"                     -> "photosynthesis"
 //   long line with no ending + lowercase line  -> one line (a sentence that wrapped)
+// A wrapped line is about as long as the longest lines in the text (text from a PDF
+// wraps at the same width). Typed notes where each line is its own thought, with no
+// periods, have lines of different lengths, so they are left alone.
 // Blank lines are kept as paragraph breaks.
 function joinBrokenLines(lines) {
+  const longest = Math.max(0, ...lines.map((l) => l.length));
+  const wrapWidth = Math.max(55, longest * 0.8);
+  // Quick typed notes ("the war ended in 1918") usually start lowercase and never
+  // end with a period. Then each line is its own note, so wrapped lines aren't joined.
+  const filled = lines.filter(Boolean);
+  const typedNotes = filled.length >= 3 &&
+    filled.filter((l) => /^[a-z]/.test(l)).length / filled.length > 0.6 &&
+    filled.filter((l) => /[.!?]$/.test(l)).length / filled.length < 0.2;
   const out = [];
   for (const line of lines) {
     const prev = out[out.length - 1];
@@ -114,7 +132,7 @@ function joinBrokenLines(lines) {
         out[out.length - 1] = prev.slice(0, -1) + line;
         continue;
       }
-      if (prev.length >= 55 && !/[.!?:;]$/.test(prev) && /^[a-z]/.test(line)) {
+      if (!typedNotes && prev.length >= wrapWidth && !/[.!?:;]$/.test(prev) && /^[a-z]/.test(line)) {
         out[out.length - 1] = `${prev} ${line}`;
         continue;
       }
@@ -195,7 +213,11 @@ function findAlternatingPairs(lines, taken) {
     if (taken.has(i) || taken.has(i + 1)) continue;
     const a = lines[i];
     const b = lines[i + 1];
-    if (looksLikeTerm(a) && !/[.!?]$/.test(a) && b.length > a.length && !splitLine(b)) {
+    // A short line that reads like a sentence ("the war was in 1812") isn't a term.
+    const isSentence = wordCount(a) >= 6 ||
+      /\b(?:is|are|was|were|has|have|had|did|does|will|because|during|takes|happens|occurs)\b/i.test(a) ||
+      (wordCount(a) >= 3 && /\b[a-z]{3,}ed\b/.test(a)); // "the war ended in 1918"
+    if (looksLikeTerm(a) && !isSentence && !/[.!?]$/.test(a) && b.length > a.length && !splitLine(b)) {
       found.push({ at: i, pair: [a, b], idx: [i, i + 1] });
       i++;
     }
@@ -209,16 +231,35 @@ const DEFINITION = /^([A-Z][\w'’()\- ]{1,50}?)\s+(?:is|are|refers to|means|is 
 const NOT_A_TERM = /^(?:it|this|that|these|those|there|here|which|what|who|he|she|they|we|you|i|one|some|many|most|each|all|both|if|when|because)\b/i;
 const upperFirst = (s) => s.charAt(0).toUpperCase() + s.slice(1);
 
-function findDefinitionSentences(lines, taken) {
+// Notes written as sentences. For each sentence, in order:
+//   1. "X is/are ..."            -> term card (Mitochondria -> The organelles that...)
+//   2. a fact pattern            -> question card (When was X? Why did X start? ...)
+//   3. a date, number or name    -> fill-in-the-blank that hides it
+// "it"/"they" at the start of a sentence means the subject of the sentence before,
+// even across lines.
+function findProseCards(lines, taken) {
   const found = [];
+  let subject = null;
   lines.forEach((line, i) => {
     if (taken.has(i)) return;
-    for (const sentence of line.split(/(?<=[.?!])\s+/)) {
-      const m = sentence.match(DEFINITION);
-      if (!m || sentence.includes('?') || NOT_A_TERM.test(m[1])) continue;
-      const term = m[1].trim().replace(/^(?:the|a|an)\s+/i, '');
-      if (!term || wordCount(term) > 5 || /[,;]$/.test(term)) continue;
-      found.push({ at: i, pair: [upperFirst(term), upperFirst(m[2].trim())], idx: [i] });
+    for (const sentence of splitSentences(line)) {
+      const def = sentence.match(DEFINITION);
+      if (def && !sentence.includes('?') && !NOT_A_TERM.test(def[1])) {
+        const term = def[1].trim().replace(/^(?:the|a|an)\s+/i, '');
+        if (term && wordCount(term) <= 5 && !/[,;]$/.test(term)) {
+          found.push({ at: i, pair: [upperFirst(term), upperFirst(def[2].trim())], idx: [i] });
+          subject = def[1].trim();
+          continue;
+        }
+      }
+      const fact = factFromSentence(sentence, subject);
+      if (fact) {
+        found.push({ at: i, pair: fact.pair, idx: [i] });
+        subject = fact.subject;
+        continue;
+      }
+      const blank = blankKeyFact(sentence);
+      if (blank) found.push({ at: i, pair: blank, idx: [i] });
     }
   });
   return found;
@@ -265,8 +306,10 @@ export function generateCards(text, maxCards = 100) {
   let entries = [...qa, ...terms];
   const taken = () => new Set(entries.flatMap((e) => e.idx));
 
-  // Still thin: look for "X is/are ..." sentences, then fill-in-the-blanks.
-  if (entries.length < 5) entries.push(...findDefinitionSentences(lines, taken()));
+  // Lines written as sentences: definitions, facts, and key-fact blanks.
+  entries.push(...findProseCards(lines, taken()));
+
+  // Still thin: other long sentences become fill-in-the-blanks.
   if (entries.length < 5) entries.push(...findBlankSentences(lines, taken(), maxCards - entries.length));
 
   // Keep notes in the order they were written, drop duplicate fronts, apply the cap.
